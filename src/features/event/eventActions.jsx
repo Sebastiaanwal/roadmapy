@@ -1,7 +1,6 @@
 import { toastr } from 'react-redux-toastr';
-import { DELETE_EVENT, FETCH_EVENTS } from './eventConstants';
+import { FETCH_EVENTS } from './eventConstants';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from '../async/asyncActions';
-import { fetchSampleData } from '../../app/data/mockAPI';
 import { createNewEvent } from '../../app/common/util/helpers';
 import moment from 'moment';
 import firebase from '../../app/config/firebase';
@@ -13,7 +12,12 @@ export const createEvent = event => {
     const photoURL = getState().firebase.profile.photoURL;
     let newEvent = createNewEvent(user, photoURL, event);
     try {
-      let createdEvent = await firestore.add(`events`, newEvent);
+      let createdEvent = await firestore.add(`events`, {...newEvent, 
+        counter: 0,
+        junior_counter: 0, 
+        medior_counter: 0, 
+        senior_counter: 0
+      });
       await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
         eventId: createdEvent.id,
         userUid: user.uid,
@@ -42,6 +46,7 @@ export const updateEvent = event => {
     }
   };
 };
+
 
 export const cancelToggle = (cancelled, eventId) => async (dispatch, getState, { getFirestore }) => {
   const firestore = getFirestore();
@@ -76,13 +81,13 @@ export const getEventsForDashboard = lastEvent => async (dispatch, getState) => 
 
     lastEvent
       ? (query = eventsRef
-          .where('date', '>=', today)
-          .orderBy('date')
+          
+          .orderBy('counter')
           .startAfter(startAfter)
           .limit(2))
       : (query = eventsRef
-          .where('date', '>=', today)
-          .orderBy('date')
+          
+          .orderBy('counter')
           .limit(2));
     
     let querySnap = await query.get();
@@ -127,3 +132,4 @@ export const addEventComment = (eventId, values, parentId) =>
       toastr.error('Oops', 'Problem adding comment')
     }
   }
+

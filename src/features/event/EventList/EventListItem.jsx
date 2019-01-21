@@ -1,13 +1,31 @@
 import React, { Component } from 'react';
 import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom'
-import EventListAttendee from './EventListAttendee'
+import { compose } from 'redux';
+import { withFirestore, firebaseConnect } from 'react-redux-firebase';
+import { connect } from 'react-redux';
 import format from 'date-fns/format'
-import { objectToArray } from '../../../app/common/util/helpers'
+import DecrementButton from '../../counter/buttons/DecrementButton'
+import IncrementButton from '../../counter/buttons/IncrementButton'
+import EventListCounter from './EventListCounter'
+
+const mapState = (state, ownProps) => {
+  let eventState = {};
+
+  const eventStateProp = state.firestore.ordered.events.filter(e => e.id === ownProps.event.id)
+  eventState = eventStateProp[0];
+  
+
+  return {
+   eventState
+  }
+};
+
 
 class EventListItem extends Component {
+
   render() {
-    const {event} = this.props
+    const {event, eventState} = this.props
     return (
     <Segment.Group>
         <Segment>
@@ -32,15 +50,12 @@ class EventListItem extends Component {
           </span>
         </Segment>
         <Segment secondary>
-          <List horizontal>
-          {event.attendees && objectToArray(event.attendees).map((attendee) => (
-            <EventListAttendee key={attendee.id} attendee={attendee}/>
-          ))}
-
-          </List>
+          <span>{event.description}</span>
         </Segment>
         <Segment clearing>
-        <span>{event.description}</span>
+          <IncrementButton event={eventState}  />
+          <DecrementButton event={eventState} />
+          <EventListCounter event={eventState}/>
           <Button as={Link} to={`/event/${event.id}`} color="teal" floated="right" content="View" />
         </Segment>
       </Segment.Group>
@@ -48,4 +63,7 @@ class EventListItem extends Component {
   }
 }
 
-export default EventListItem;
+export default compose(
+  withFirestore,
+  connect(mapState, null),
+)(EventListItem);

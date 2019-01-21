@@ -14,6 +14,7 @@ export const createNewEvent = (user, photoURL, event) => {
     hostedBy: user.displayName,
     hostPhotoURL: photoURL || '/assets/user.png',
     created: Date.now(),
+    counter: 0,
     attendees: {
       [user.uid]: {
         going: true,
@@ -21,6 +22,7 @@ export const createNewEvent = (user, photoURL, event) => {
         photoURL: photoURL || '/assets/user.png',
         displayName: user.displayName,
         host: true
+        
       }
     }
   }

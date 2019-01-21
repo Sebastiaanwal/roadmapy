@@ -9,6 +9,9 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 import { incrementAsync, decrementAsync } from './testActions';
 import { openModal } from '../modals/modalActions'
+import DecrementButton from '../counter/buttons/DecrementButton'
+import IncrementButton from '../counter/buttons/IncrementButton'
+
 
 const mapState = state => ({
   data: state.test.data,
@@ -64,7 +67,15 @@ class TestComponent extends Component {
       <div>
         <h1>Test Area</h1>
         <h3>The answer is: {data}</h3>
-        <Button loading={loading} onClick={incrementAsync} color="green" content="Increment" />
+
+        <IncrementButton/>
+        <DecrementButton/>
+
+
+        <Button className="ui labeled icon button" loading={loading} onClick={incrementAsync} >
+        <i className="angle double up icon"></i>
+          increment
+          </Button>
         <Button loading={loading} onClick={decrementAsync} color="red" content="Decrement" />
         <Button onClick={() => openModal('TestModal', {data: 42})} color="teal" content="Open Modal" />
         <br />

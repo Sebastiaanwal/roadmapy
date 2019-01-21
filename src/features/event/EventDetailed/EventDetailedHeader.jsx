@@ -2,6 +2,9 @@ import React from 'react';
 import { Segment, Image, Item, Header, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
+import DecrementButton from '../../counter/buttons/DecrementButton'
+import IncrementButton from '../../counter/buttons/IncrementButton'
+import EventCounter from './EventCounter'
 
 const eventImageStyle = {
   filter: 'brightness(30%)'
@@ -69,6 +72,10 @@ const EventDetailedHeader = ({ event, isHost, isGoing, goingToEvent, cancelGoing
             Manage Event
           </Button>
         )}
+        <IncrementButton event={event}/>
+        <DecrementButton event={event}/>
+        <EventCounter event={event}/>
+        
       </Segment>
     </Segment.Group>
   );

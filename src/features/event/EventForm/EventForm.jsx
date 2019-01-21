@@ -39,17 +39,24 @@ const actions = {
 };
 
 const category = [
-  { key: 'drinks', text: 'Drinks', value: 'drinks' },
-  { key: 'culture', text: 'Culture', value: 'culture' },
-  { key: 'film', text: 'Film', value: 'film' },
-  { key: 'food', text: 'Food', value: 'food' },
-  { key: 'music', text: 'Music', value: 'music' },
-  { key: 'travel', text: 'Travel', value: 'travel' }
+  { key: 'seo', text: 'SEO', value: 'seo' },
+  { key: 'react', text: 'ReactJS', value: 'react' },
+  { key: 'sea', text: 'SEA', value: 'sea' },
+  { key: 'css3', text: 'CSS3', value: 'css3' },
+  { key: 'html5', text: 'HTML5', value: 'html5' },
+  { key: 'graphql', text: 'Graphql', value: 'graphql' }
+];
+
+const sub_category = [
+  { key: 'junior', text: 'Junior', value: 'junior' },
+  { key: 'medior', text: 'Medior', value: 'medior' },
+  { key: 'senior', text: 'Senior', value: 'senior' }
 ];
 
 const validate = combineValidators({
   title: isRequired({ message: 'The event title is required' }),
   category: isRequired({ message: 'Please provide a category' }),
+  sub_category: isRequired({ message: 'Please provide a sub_category' }),
   description: composeValidators(
     isRequired({ message: 'Please enter a description' }),
     hasLengthGreaterThan(4)({
@@ -143,7 +150,14 @@ class EventForm extends Component {
                 type="text"
                 component={SelectInput}
                 options={category}
-                placeholder="What is your event about"
+                placeholder="Select your skill"
+              />
+               <Field
+                name="sub_category"
+                type="text"
+                component={SelectInput}
+                options={sub_category}
+                placeholder="To which level does your question fit?"
               />
               <Field
                 name="description"
