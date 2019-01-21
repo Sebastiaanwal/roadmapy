@@ -28,7 +28,8 @@ const mapState = (state, ownProps) => {
 
   return {
     initialValues: event,
-    event
+    event,
+    loading: state.async.loading
   };
 };
 
@@ -128,7 +129,7 @@ class EventForm extends Component {
   };
 
   render() {
-    const { invalid, submitting, pristine, event, cancelToggle } = this.props;
+    const { invalid, submitting, pristine, event, cancelToggle, loading } = this.props;
     return (
       <Grid>
         <Script
@@ -199,22 +200,25 @@ class EventForm extends Component {
                 placeholder="Date and time of event"
               />
               <Button
+                loading={loading}
                 disabled={invalid || submitting || pristine}
                 positive
                 type="submit"
               >
                 Submit
               </Button>
-              <Button onClick={this.props.history.goBack} type="button">
+              <Button disabled={loading} onClick={this.props.history.goBack} type="button">
                 Cancel
               </Button>
+              {event.id &&
               <Button
+
                 onClick={() => cancelToggle(!event.cancelled, event.id)}
                 type='button'
                 color={event.cancelled ? 'green' : 'red'}
                 floated='right'
                 content={event.cancelled ? 'Reactivate Event' : 'Cancel Event'}
-              />
+              />}
             </Form>
           </Segment>
         </Grid.Column>
