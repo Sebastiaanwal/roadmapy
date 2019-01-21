@@ -78,12 +78,9 @@ const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost,
             Manage Event
           </Button>
         )}
-<<<<<<< HEAD
         <IncrementButton event={event}/>
         <DecrementButton event={event}/>
         <EventCounter event={event}/>
-=======
->>>>>>> dbf274eb474fd7a3d4e2316a9793d7f95dfff815
         
       </Segment>
 
