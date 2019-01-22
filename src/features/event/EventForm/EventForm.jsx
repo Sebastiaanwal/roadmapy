@@ -48,7 +48,7 @@ const category = [
   { key: 'graphql', text: 'Graphql', value: 'graphql' }
 ];
 
-const sub_category = [
+const subCategory = [
   { key: 'junior', text: 'Junior', value: 'junior' },
   { key: 'medior', text: 'Medior', value: 'medior' },
   { key: 'senior', text: 'Senior', value: 'senior' }
@@ -154,10 +154,10 @@ class EventForm extends Component {
                 placeholder="Select your skill"
               />
                <Field
-                name="sub_category"
+                name="subCategory"
                 type="text"
                 component={SelectInput}
-                options={sub_category}
+                options={subCategory}
                 placeholder="To which level does your question fit?"
               />
               <Field

@@ -34,16 +34,6 @@ class EventDashboard extends Component {
   };
 
   async componentDidMount() {
-    const { firestore } = this.props;
-    await firestore.setListener(`events`);
-  }
-
-  async componentWillUnmount() {
-    const { firestore } = this.props;
-    await firestore.unsetListener(`events`);
-  }
-
-  async componentDidMount() {
     let next = await this.props.getEventsForDashboard();
 
     if (next && next.docs && next.docs.length > 1) {

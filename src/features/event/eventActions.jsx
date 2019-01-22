@@ -14,10 +14,10 @@ export const createEvent = event => {
     let newEvent = createNewEvent(user, photoURL, event);
     try {
       let createdEvent = await firestore.add(`events`, {...newEvent, 
-        counter: 0,
-        junior_counter: 0, 
-        medior_counter: 0, 
-        senior_counter: 0
+        count: 0,
+        juniorCount: 0, 
+        mediorCount: 0, 
+        seniorCount: 0
       });
       await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
         eventId: createdEvent.id,
@@ -36,9 +36,8 @@ export const updateEvent = event => {
   return async (dispatch, getState) => {
     dispatch(asyncActionStart());
     const firestore = firebase.firestore();
-    if (event.date !== getState().firestore.ordered.events[0].date) {
-      event.date = moment(event.date).toDate();
-    }
+    event.date = moment(event.date).toDate();
+    
     try {
       let eventDocRef = firestore.collection('events').doc(event.id);
       let dateEqual = compareAsc(getState().firestore.ordered.events[0].date.toDate(), event.date);
@@ -105,12 +104,12 @@ export const getEventsForDashboard = lastEvent => async (dispatch, getState) => 
     lastEvent
       ? (query = eventsRef
           
-          .orderBy('counter')
+          .orderBy('count')
           .startAfter(startAfter)
           .limit(2))
       : (query = eventsRef
           
-          .orderBy('counter')
+          .orderBy('count')
           .limit(2));
 
     let querySnap = await query.get();
@@ -156,3 +155,56 @@ export const addEventComment = (eventId, values, parentId) =>
     }
   }
 
+
+// geimporteerd en aangepast uit de userfunction.
+
+  export const getCategoryEvents = (category, activeTab) => async (dispatch, getState) => {
+    dispatch(asyncActionStart());
+    const firestore = firebase.firestore();
+    console.log(category)
+    const junior = 'junior'
+    const medior = 'medior'
+    const senior = 'senior'
+    console.log(junior)
+    let eventsRef = firestore.collection('events');
+    let query;
+    switch (activeTab) {
+      case 1: // past events
+        query = eventsRef
+          .where('category', '==', category)
+          .where('subCategory', '==', junior )
+          .orderBy('count', 'desc');
+        break;
+      case 2: // future events
+        query = eventsRef
+          .where('category', '==', category)
+          .where('subCategory', '==', medior )
+          .orderBy('count', 'desc');
+        break;
+      case 3: // hosted events
+        query = eventsRef
+          .where('category', '==', category)
+         .where('subCategory', '==', senior )
+          .orderBy('count', 'desc');
+        break;
+      default:
+        query = eventsRef.where('category', '==', category).orderBy('count', 'desc');
+    }
+    try {
+      let querySnap = await query.get();
+      let events = [];
+  
+      for (let i = 0; i < querySnap.docs.length; i++) {
+        let evt = {...querySnap.docs[i].data(), id: querySnap.docs[i].id}
+        
+        events.push(evt)
+      }
+  
+      dispatch({ type: FETCH_EVENTS, payload: { events } });
+  
+      dispatch(asyncActionFinish());
+    } catch (error) {
+      console.log(error);
+      dispatch(asyncActionError());
+    }
+  };

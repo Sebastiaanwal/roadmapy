@@ -20,6 +20,10 @@ const AsyncEventForm = Loadable({
   loader: () => import('../../features/event/EventForm/EventForm'),
   loading: LoadingComponent
 })
+const AsyncCategoryPage = Loadable({
+  loader: () => import('../../features/event/EventCategory/CategoryPage'),
+  loading: LoadingComponent
+})
 const AsyncSettingsDashboard = Loadable({
   loader: () => import('../../features/user/Settings/SettingsDashboard'),
   loading: LoadingComponent
@@ -66,6 +70,7 @@ class App extends Component {
                   <Route path="/manage/:id" component={UserIsAuthenticated(AsyncEventForm)} />
                   <Route path="/people" component={UserIsAuthenticated(AsyncPeopleDashboard)} />
                   <Route path="/profile/:id" component={UserIsAuthenticated(AsyncUserDetailedPage)} />
+                  <Route path="/category/:id" component={UserIsAuthenticated(AsyncCategoryPage)} />
                   <Route path="/settings" component={UserIsAuthenticated(AsyncSettingsDashboard)} />
                   <Route path="/createEvent" component={UserIsAuthenticated(AsyncEventForm)} />
                   <Route path="/error" component={AsyncNotFound} />

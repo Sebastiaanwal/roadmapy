@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom'
 import { compose } from 'redux';
-import { withFirestore, firebaseConnect } from 'react-redux-firebase';
+import { firestoreConnect } from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import format from 'date-fns/format'
 import DecrementButton from '../../counter/buttons/DecrementButton'
@@ -11,10 +11,13 @@ import EventListCounter from './EventListCounter'
 
 const mapState = (state, ownProps) => {
   let eventState = {};
+  console.log(state.events[0].id)
+  console.log(ownProps.event.id)
 
   const eventStateProp = state.firestore.ordered.events.filter(e => e.id === ownProps.event.id)
+  console.log(eventStateProp)
   eventState = eventStateProp[0];
-  
+  console.log(eventStateProp[0])
 
   return {
    eventState
@@ -23,6 +26,19 @@ const mapState = (state, ownProps) => {
 
 
 class EventListItem extends Component {
+  
+  async componentDidMount() {
+    const { firestore, event } = this.props;
+    await firestore.get(`events/`);
+  
+    await firestore.setListener(`events/`);
+  
+  }
+
+  async componentWillUnmount() {
+    const { firestore, event} = this.props;
+    await firestore.unsetListener(`events/`);
+  }
 
   render() {
     const {event, eventState} = this.props
@@ -55,7 +71,7 @@ class EventListItem extends Component {
         <Segment clearing>
           <IncrementButton event={eventState}  />
           <DecrementButton event={eventState} />
-          <EventListCounter event={eventState}/>
+          <EventListCounter event={eventState} />
           <Button as={Link} to={`/event/${event.id}`} color="teal" floated="right" content="View" />
         </Segment>
       </Segment.Group>
@@ -64,6 +80,6 @@ class EventListItem extends Component {
 }
 
 export default compose(
-  withFirestore,
   connect(mapState, null),
+  firestoreConnect(),
 )(EventListItem);
