@@ -8,10 +8,10 @@ const AsyncHomePage = Loadable({
   loader: () => import('../../features/home/HomePage'),
   loading: LoadingComponent
 })
-const AsyncEventDashboard = Loadable({
+/* const AsyncEventDashboard = Loadable({
   loader: () => import('../../features/event/EventDashboard/EventDashboard'),
   loading: LoadingComponent
-})
+}) */
 const AsyncNavBar  = Loadable({
   loader: () => import('../../features/nav/NavBar/NavBar'),
   loading: LoadingComponent
@@ -65,11 +65,12 @@ class App extends Component {
               <AsyncNavBar />
               <Container className="main">
                 <Switch>
-                  <Route path="/events" component={AsyncEventDashboard} />
+                  {/* <Route path="/events" component={AsyncEventDashboard} /> */}
                   <Route path="/event/:id" component={AsyncEventDetailedPage} />
                   <Route path="/manage/:id" component={UserIsAuthenticated(AsyncEventForm)} />
                   <Route path="/people" component={UserIsAuthenticated(AsyncPeopleDashboard)} />
                   <Route path="/profile/:id" component={UserIsAuthenticated(AsyncUserDetailedPage)} />
+                  <Route path="/category/:id/:sub" component={UserIsAuthenticated(AsyncCategoryPage)} />x
                   <Route path="/category/:id" component={UserIsAuthenticated(AsyncCategoryPage)} />
                   <Route path="/settings" component={UserIsAuthenticated(AsyncSettingsDashboard)} />
                   <Route path="/createEvent" component={UserIsAuthenticated(AsyncEventForm)} />

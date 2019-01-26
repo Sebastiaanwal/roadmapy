@@ -27,18 +27,6 @@ const mapState = (state, ownProps) => {
 
 class EventListItem extends Component {
   
-  async componentDidMount() {
-    const { firestore, event } = this.props;
-    await firestore.get(`events/`);
-  
-    await firestore.setListener(`events/`);
-  
-  }
-
-  async componentWillUnmount() {
-    const { firestore, event} = this.props;
-    await firestore.unsetListener(`events/`);
-  }
 
   render() {
     const {event, eventState} = this.props

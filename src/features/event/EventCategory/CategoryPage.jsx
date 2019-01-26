@@ -1,54 +1,106 @@
 import React, { Component } from 'react';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Loader } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { firestoreConnect, isEmpty } from 'react-redux-firebase';
-import { compose } from 'redux'
-import CategoryDetailedEvents from './CategoryDetailedEvents'
-import LoadingComponent from '../../../app/layout/LoadingComponent'
-import { getCategoryEvents } from '../../event/eventActions'
+import { firestoreConnect } from 'react-redux-firebase';
+import { getCategoryEvents } from '../eventActions';
+import EventList from '../EventList/EventList';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import EventActivity from '../EventActivity/EventActivity';
+import CategoryMenu from '../EventCategory/CategoryMenu'
 
 const mapState = (state, ownProps) => {
   
-    const category = ownProps.match.params.id;
-  
+const category = ownProps.match.params.id;
+const subCategory = ownProps.match.params.sub;
+
   return {
     category,
+    subCategory,
     events: state.events,
-    eventsLoading: state.async.loading,
-    photos: state.firestore.ordered.photos,
-    requesting: state.firestore.status.requesting,
+    loading: state.async.loading,
+    activities: state.firestore.ordered.activity
   }
 }
 
 const actions = {
-    getCategoryEvents
-}
+  getCategoryEvents
+};
 
 class CategoryPage extends Component {
+  state = {
+    moreEvents: false,
+    loadingInitial: true,
+    loadedEvents: [],
+    contextRef: {}
+  };
 
   async componentDidMount() {
-    const events = await this.props.getCategoryEvents(this.props.category);
-    console.log(events);
+    const { firestore, category, subCategory } = this.props;
+    await firestore.get(`events/`);
+  
+    await firestore.setListener(`events/`);
+
+    let next = await this.props.getCategoryEvents(category, subCategory);
+    if (next && next.docs) {
+      this.setState({
+        moreEvents: true,
+        loadingInitial: false
+      });
+    }
   }
 
-  changeTab = (e, data) => {
-    this.props.getCategoryEvents(this.props.category, data.activeIndex)
+  componentWillReceiveProps(nextProps) {
+    if (this.props.events !== nextProps.events) {
+      console.log(this.props.events)
+      console.log(nextProps.events)
+      this.setState({
+        loadedEvents: [...this.state.loadedEvents, ...nextProps.events]
+      });
+    }
   }
+
+  getNextEvents = async () => {
+    const { events, category, subCategory } = this.props;
+    let lastEvent = events && events[events.length - 1];
+    let next = await this.props.getCategoryEvents(category, subCategory, lastEvent);
+    if (next && next.docs && next.docs.length <= 1) {
+      this.setState({
+        moreEvents: false
+      });
+    }
+  };
+
+  handleContextRef = contextRef => this.setState({contextRef})
 
   render() {
-    const {requesting, events, eventsLoading, category } = this.props;
-    
-    const loading = requesting[`category/${category}`]
+    const { loading, activities, match } = this.props;
+    const { moreEvents, loadedEvents } = this.state;
+    if (this.state.loadingInitial) return <LoadingComponent inverted={true} />;
 
-    if (loading) return <LoadingComponent inverted={true}/>
     return (
       <Grid>
-        <CategoryDetailedEvents changeTab={this.changeTab} events={events} eventsLoading={eventsLoading}/>
+        <Grid.Column width={10}>
+          <CategoryMenu category={match.params.id} />
+          <div ref={this.handleContextRef}>
+          <EventList
+            loading={loading}
+            moreEvents={moreEvents}
+            events={loadedEvents}
+            getNextEvents={this.getNextEvents}
+            changeTab={this.changeTab}
+          />
+          </div>
+
+        </Grid.Column>
+        <Grid.Column width={6}>
+          <EventActivity activities={activities} contextRef={this.state.contextRef} />
+        </Grid.Column>
+        <Grid.Column width={10}>
+          <Loader active={loading}/>
+        </Grid.Column>
       </Grid>
     );
   }
 }
 
-export default compose(
-  connect(mapState, actions),
-)(CategoryPage);
+export default connect(mapState, actions)(firestoreConnect()(CategoryPage));

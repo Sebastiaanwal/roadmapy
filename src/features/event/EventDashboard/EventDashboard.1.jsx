@@ -1,4 +1,4 @@
-/* import React, { Component } from 'react';
+import React, { Component } from 'react';
 import { Grid, Loader } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { firestoreConnect } from 'react-redux-firebase';
@@ -7,15 +7,20 @@ import EventList from '../EventList/EventList';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import EventActivity from '../EventActivity/EventActivity';
 
+const mapState = (state, ownProps) => {
+  
+const category = ownProps.match.params.id;
 
-const mapState = state => ({
-  events: state.events,
-  loading: state.async.loading,
-  activities: state.firestore.ordered.activity
-});
+  return {
+    category,
+    events: state.events,
+    loading: state.async.loading,
+    activities: state.firestore.ordered.activity
+  }
+}
 
 const actions = {
-  getEventsForDashboard
+  getCategoryEvents
 };
 
 class EventDashboard extends Component {
@@ -32,8 +37,7 @@ class EventDashboard extends Component {
   
     await firestore.setListener(`events/`);
 
-    let next = await this.props.getEventsForDashboard();
-
+    let next = await this.props.getCategoryEvents(this.props.category);
     if (next && next.docs && next.docs.length > 1) {
       this.setState({
         moreEvents: true,
@@ -53,7 +57,7 @@ class EventDashboard extends Component {
   getNextEvents = async () => {
     const { events } = this.props;
     let lastEvent = events && events[events.length - 1];
-    let next = await this.props.getEventsForDashboard(lastEvent);
+    let next = await this.props.getCategoryEvents(this.props.category, lastEvent);
     if (next && next.docs && next.docs.length <= 1) {
       this.setState({
         moreEvents: false
@@ -62,7 +66,11 @@ class EventDashboard extends Component {
   };
 
   handleContextRef = contextRef => this.setState({contextRef})
-  
+
+  changeTab = (e, data) => {
+    this.props.getCategoryEvents(this.props.category, data.activeIndex)
+  }
+
   render() {
     const { loading, activities } = this.props;
     const { moreEvents, loadedEvents } = this.state;
@@ -77,6 +85,7 @@ class EventDashboard extends Component {
             moreEvents={moreEvents}
             events={loadedEvents}
             getNextEvents={this.getNextEvents}
+            changeTab={this.changeTab}
           />
           </div>
 
@@ -93,4 +102,3 @@ class EventDashboard extends Component {
 }
 
 export default connect(mapState, actions)(firestoreConnect()(EventDashboard));
- */
