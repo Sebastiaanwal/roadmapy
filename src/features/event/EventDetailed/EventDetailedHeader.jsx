@@ -5,6 +5,8 @@ import format from 'date-fns/format';
 import DecrementButton from '../../counter/buttons/DecrementButton'
 import IncrementButton from '../../counter/buttons/IncrementButton'
 import EventCounter from './EventCounter'
+import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
+
 
 const eventImageStyle = {
   filter: 'brightness(30%)'
@@ -19,11 +21,8 @@ const eventImageTextStyle = {
   color: 'white'
 };
 
-const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost, isGoing, goingToEvent, cancelGoingToEvent }) => {
-  let eventDate;
-  if (event.date) {
-    eventDate = event.date.toDate();
-  }
+const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost, isGoing, updatingCategoryLike, cancelupdatingCategoryLike }) => {
+  
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: '0' }}>
@@ -42,7 +41,6 @@ const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost,
                   content={event.title}
                   style={{ color: 'white' }}
                 />
-                <p>{format(eventDate, 'dddd Do MMMM')}</p>
                 <p>
                   Hosted by <strong>{event.hostedBy}</strong>
                 </p>
@@ -56,10 +54,10 @@ const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost,
         {!isHost && (
           <div>
               {isGoing && !event.cancelled &&
-              <Button onClick={() => cancelGoingToEvent(event)}>Cancel My Place</Button>}
+              <Button onClick={() => cancelupdatingCategoryLike(event)}>Cancel My Place</Button>}
 
               {!isGoing && authenticated && !event.cancelled &&
-              <Button loading={loading} onClick={() => goingToEvent(event)} color="teal">JOIN THIS EVENT</Button>}
+              <Button loading={loading} onClick={() => updatingCategoryLike(event)} color="teal">JOIN THIS EVENT</Button>}
               
               {!authenticated && !event.cancelled &&
               <Button loading={loading} onClick={() => openModal('UnauthModal')} color="teal">JOIN THIS EVENT</Button>}
@@ -78,9 +76,35 @@ const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost,
             Manage Event
           </Button>
         )}
-        <IncrementButton event={event}/>
+      {/*   <IncrementButton event={event}  />
         <DecrementButton event={event}/>
-        <EventCounter event={event}/>
+        <EventCounter event={event}/> */}
+        <SubCategoryButton event={event} sub={'junior'} openModel={openModal} updatingCategoryLike={updatingCategoryLike}
+            loading={loading}
+            isHost={isHost}
+            isGoing={isGoing}
+            updatingCategoryLike={updatingCategoryLike}
+            cancelupdatingCategoryLike={cancelupdatingCategoryLike}
+            authenticated={authenticated}
+        />
+        <SubCategoryButton event={event} sub={'medior'} openModel={openModal} updatingCategoryLike={updatingCategoryLike}
+         loading={loading}
+         isHost={isHost}
+         isGoing={isGoing}
+         updatingCategoryLike={updatingCategoryLike}
+         cancelupdatingCategoryLike={cancelupdatingCategoryLike}
+         authenticated={authenticated}
+        
+        />
+        <SubCategoryButton event={event} sub={'senior'} openModel={openModal} updatingCategoryLike={updatingCategoryLike}
+         loading={loading}
+         isHost={isHost}
+         isGoing={isGoing}
+         updatingCategoryLike={updatingCategoryLike}
+         cancelupdatingCategoryLike={cancelupdatingCategoryLike}
+         authenticated={authenticated}
+
+        />
         
       </Segment>
 

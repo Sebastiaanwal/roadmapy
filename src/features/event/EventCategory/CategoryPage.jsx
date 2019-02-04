@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Grid, Loader } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { firestoreConnect } from 'react-redux-firebase';
+import { compose } from 'redux';
+import { firestoreConnect, firebaseConnect } from 'react-redux-firebase';
 import { getCategoryEvents } from '../eventActions';
 import EventList from '../EventList/EventList';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import EventActivity from '../EventActivity/EventActivity';
 import CategoryMenu from '../EventCategory/CategoryMenu'
+
 
 const mapState = (state, ownProps) => {
   
@@ -18,7 +20,8 @@ const subCategory = ownProps.match.params.sub;
     subCategory,
     events: state.events,
     loading: state.async.loading,
-    activities: state.firestore.ordered.activity
+    activities: state.firestore.ordered.activity,
+    auth: state.firebase.auth,
   }
 }
 
@@ -31,7 +34,8 @@ class CategoryPage extends Component {
     moreEvents: false,
     loadingInitial: true,
     loadedEvents: [],
-    contextRef: {}
+    contextRef: {}, 
+    
   };
 
   async componentDidMount() {
@@ -51,8 +55,6 @@ class CategoryPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.events !== nextProps.events) {
-      console.log(this.props.events)
-      console.log(nextProps.events)
       this.setState({
         loadedEvents: [...this.state.loadedEvents, ...nextProps.events]
       });
@@ -73,7 +75,7 @@ class CategoryPage extends Component {
   handleContextRef = contextRef => this.setState({contextRef})
 
   render() {
-    const { loading, activities, match } = this.props;
+    const { loading, activities, match, auth } = this.props;
     const { moreEvents, loadedEvents } = this.state;
     if (this.state.loadingInitial) return <LoadingComponent inverted={true} />;
 
@@ -88,6 +90,7 @@ class CategoryPage extends Component {
             events={loadedEvents}
             getNextEvents={this.getNextEvents}
             changeTab={this.changeTab}
+            auth={auth}
           />
           </div>
 
@@ -103,4 +106,6 @@ class CategoryPage extends Component {
   }
 }
 
-export default connect(mapState, actions)(firestoreConnect()(CategoryPage));
+export default compose(connect(mapState, actions)(firestoreConnect()(CategoryPage)));
+
+

@@ -10,7 +10,7 @@ import EventDetailedChat from './EventDetailedChat';
 import EventDetailedSidebar from './EventDetailedSidebar';
 import LoadingComponent from '../../../app/layout/LoadingComponent'
 import { objectToArray, createDataTree } from '../../../app/common/util/helpers';
-import { goingToEvent, cancelGoingToEvent } from '../../user/userActions';
+import { updatingCategoryLike, cancelGoingToEvent } from '../../user/userActions';
 import { addEventComment } from '../eventActions';
 import { openModal } from '../../modals/modalActions'
 
@@ -33,7 +33,7 @@ const mapState = (state, ownProps) => {
 };
 
 const actions = {
-  goingToEvent,
+  updatingCategoryLike,
   cancelGoingToEvent,
   addEventComment,
   openModal
@@ -63,7 +63,7 @@ class EventDetailedPage extends Component {
   }
 
   render() {
-    const { match, requesting, openModal, loading, event, auth, goingToEvent, cancelGoingToEvent, addEventComment, eventChat } = this.props;
+    const { match, requesting, openModal, loading, event, auth, updatingCategoryLike, cancelGoingToEvent, addEventComment, eventChat } = this.props;
     const attendees = event && event.attendees && objectToArray(event.attendees).sort(function(a,b) {
       return a.joinDate - b.joinDate
     })
@@ -83,7 +83,7 @@ class EventDetailedPage extends Component {
             loading={loading}
             isHost={isHost}
             isGoing={isGoing}
-            goingToEvent={goingToEvent}
+            updatingCategoryLike={updatingCategoryLike}
             cancelGoingToEvent={cancelGoingToEvent}
             authenticated={authenticated}
             openModal={openModal}

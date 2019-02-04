@@ -36,7 +36,6 @@ export const updateEvent = event => {
   return async (dispatch, getState) => {
     dispatch(asyncActionStart());
     const firestore = firebase.firestore();
-    event.date = moment(event.date).toDate();
     
     try {
       let eventDocRef = firestore.collection('events').doc(event.id);

@@ -15,7 +15,7 @@ const panes = [
 
 class EventList extends Component {
   render() {
-    const { events, getNextEvents, loading, moreEvents, match } = this.props;
+    const { events, getNextEvents, loading, moreEvents, match, auth } = this.props;
     return (
       <div>
         {events &&
@@ -26,7 +26,7 @@ class EventList extends Component {
               hasMore={!loading && moreEvents}
               initialLoad={false}
             >
-              {events && events.map(event => <EventListItem match={match} key={event.id} event={event}/>)}
+              {events && events.map(event => <EventListItem match={match} key={event.id} event={event} auth={auth}/>)}
             </InfiniteScroll>
           )}
       </div>

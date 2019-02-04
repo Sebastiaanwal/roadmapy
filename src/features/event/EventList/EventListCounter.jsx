@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Segment, Item, Icon, List, Grid, Column, Button, Label } from 'semantic-ui-react';
 
 
 
@@ -8,14 +9,7 @@ class EventListCounter extends Component {
     const { event } = this.props;
 
     return (
-        <div class="ui left labeled button" tabindex="0">
-          <a class="ui basic right pointing label">
-            {event.count}
-          </a>
-          <div class="ui button">
-              <i class="heart icon"></i> score
-          </div>
-        </div>
+      <div className="ui right pointing grey basic label">{event.count}</div>
     )
   }
 }

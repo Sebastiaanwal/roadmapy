@@ -125,32 +125,36 @@ export const setMainPhoto = photo => async (dispatch, getState) => {
   }
 };
 
-export const goingToEvent = event => async (dispatch, getState) => {
+export const updatingCategoryLike = (event) => async (dispatch, getState) => {
   dispatch(asyncActionStart())
   const firestore = firebase.firestore();
   const user = firebase.auth().currentUser;
   const profile = getState().firebase.profile;
-  const attendee = {
+  const userProfile = {
     going: true,
     joinDate: Date.now(),
     photoURL: profile.photoURL || '/assets/user.png',
     displayName: profile.displayName,
-    host: false
-  };
+    host: false,
+    like: event.subCategory,
+    id: user.uid, 
+    upvoted: event.upvoted
+    };
   try {
     let eventDocRef = firestore.collection('events').doc(event.id);
-    let eventAttendeeDocRef = firestore.collection('event_attendee').doc(`${event.id}_${user.uid}`);
+    let eventAttendeeDocRef = firestore.collection('event_likes').doc(`${event.id}_${user.uid}`);
 
     await firestore.runTransaction(async (transaction) => {
       await transaction.get(eventDocRef);
       await transaction.update(eventDocRef, {
-        [`attendees.${user.uid}`]: attendee
+        [`likes.${user.uid}`]: userProfile
       })
       await transaction.set(eventAttendeeDocRef, {
         eventId: event.id,
         userUid: user.uid,
         eventDate: event.date,
-        host: false
+        host: false,
+        likedSubCategory: event.subCategory,
       })
     })
     dispatch(asyncActionFinish())

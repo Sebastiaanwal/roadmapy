@@ -1,37 +1,49 @@
 import React, { Component } from 'react';
-import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react';
+import { Segment, Item, Icon, List, Grid, Column, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom'
 import { compose } from 'redux';
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect} from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import format from 'date-fns/format'
 import DecrementButton from '../../counter/buttons/DecrementButton'
 import IncrementButton from '../../counter/buttons/IncrementButton'
 import EventListCounter from './EventListCounter'
+import moduleName from '../../counter/buttons/SubCategoryButton'
+import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
+import { objectToArray } from '../../../app/common/util/helpers';
+
+
 
 const mapState = (state, ownProps) => {
   let eventState = {};
-  console.log(state.events[0].id)
-  console.log(ownProps.event.id)
+  let upVoted = {}
 
   const eventStateProp = state.firestore.ordered.events.filter(e => e.id === ownProps.event.id)
-  console.log(eventStateProp)
   eventState = eventStateProp[0];
-  console.log(eventStateProp[0])
+ 
+  if (eventState.likes) {
+  const findLikeId = objectToArray(eventState.likes).filter(e => e.id === ownProps.auth.uid)
+  upVoted = findLikeId[0].upvoted
+  } 
 
   return {
-   eventState
+   eventState, 
+   upVoted
   }
 };
 
 
 class EventListItem extends Component {
-  
-
   render() {
-    const {event, eventState} = this.props
+    const {event, eventState, authenticated, upVoted} = this.props
+
     return (
-    <Segment.Group>
+    <Grid columns={2} divided>
+      <Grid.Column width={2} >
+          <EventListCounter event={eventState} />
+      </Grid.Column>
+      <Grid.Column width={14}>
+      <Segment.Group>
         <Segment>
           <Item.Group>
             <Item>
@@ -57,17 +69,24 @@ class EventListItem extends Component {
           <span>{event.description}</span>
         </Segment>
         <Segment clearing>
-          <IncrementButton event={eventState}  />
-          <DecrementButton event={eventState} />
-          <EventListCounter event={eventState} />
+          <SubCategoryButton 
+          event={eventState} 
+          authenticated={authenticated}
+          upVoted={upVoted}
+          />
+
           <Button as={Link} to={`/event/${event.id}`} color="teal" floated="right" content="View" />
         </Segment>
       </Segment.Group>
+      </Grid.Column>
+    </Grid>
+
+   
     );
   }
 }
 
 export default compose(
   connect(mapState, null),
-  firestoreConnect(),
+  firestoreConnect()
 )(EventListItem);
