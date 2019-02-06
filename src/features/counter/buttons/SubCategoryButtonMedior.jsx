@@ -1,31 +1,43 @@
-/* import React, { Component } from 'react'
+import React, { Component } from 'react'
 import { Button, Icon, Label } from 'semantic-ui-react';
 
-class SubCategoryButtonMedior extends Component {
-  async handleAsyncUpvote() {
+
+class SubCategoryButtonMedior extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.handleAsyncUpvote = this.handleAsyncUpvote.bind(this)
+    this.handleAsyncDownvote = this.handleAsyncDownvote.bind(this)
+    this.handleAsyncBackVoteUp = this.handleAsyncBackVoteUp.bind(this)
+    this.handleAsyncBackVoteDown = this.handleAsyncBackVoteDown.bind(this)
+    this.handleVoteLogic = this.handleVoteLogic.bind(this)
+  }
+
+  handleAsyncUpvote = async () => {
     const name = 'medior'
     const { 
       event,
       onClickEventsUp,
       handleUpVote,
-      updateCategoryUp,
+      updateCategoryUp, 
       handleCategory
     } = this.props
     
     await handleCategory(name)
-    await handleUpVote() 
+    await handleUpVote()
     await updateCategoryUp(event)
     await onClickEventsUp(event)
   }
 
-  async handleAsyncDownvote() {
+
+  handleAsyncDownvote = async () => {
     const name = 'medior'
     const { 
       event,
       handleCategory,
       onClickEventsDown, 
       handleDownVote, 
-      updateCategoryDown
+      updateCategoryDown,
     } = this.props
     await handleCategory(name)
     await handleDownVote()
@@ -33,7 +45,7 @@ class SubCategoryButtonMedior extends Component {
     await onClickEventsDown(event)
   }
 
-  async handleAsyncBackVoteUp() {
+  handleAsyncBackVoteUp = async () => {
     const name = 'medior'
     const { 
       event, 
@@ -48,7 +60,7 @@ class SubCategoryButtonMedior extends Component {
     await onClickEventsBackVoteUp(event)
   }
 
-  async handleAsyncBackVoteDown() {
+  handleAsyncBackVoteDown = async () => {
     const name = 'medior'
     const { 
       event, 
@@ -63,36 +75,40 @@ class SubCategoryButtonMedior extends Component {
     await onClickEventsBackVoteDown(event)
   }
 
-  render() {
+  handleVoteLogic() {
     const { 
-      event, initialUpvote, upvoted
+      upvoted, initialUpvote
     } = this.props
+    if (!initialUpvote && !upvoted) {
+      return this.handleAsyncUpvote()
+    } else if (initialUpvote && upvoted) {
+      return this.handleAsyncDownvote()
+    } else if (!initialUpvote && upvoted) {
+      return this.handleAsyncBackVoteDown()
+    } else if (initialUpvote && !upvoted)  {
+      return this.handleAsyncBackVoteUp()
+    }
+  }
+  
+ 
+
+  render() {
 
     return (
         <Button as='div' labelPosition='right' >
         <Button 
           color='orange'
-          onClick={()  => {
-          if (!initialUpvote && !upvoted) {
-            return this.handleAsyncUpvote()
-          } else if (initialUpvote && upvoted) {
-            return this.handleAsyncDownvote()
-          } else if (!initialUpvote && upvoted) {
-            return this.handleAsyncBackVoteUp()
-          } else if (initialUpvote && !upvoted)  {
-            return this.handleAsyncBackVoteDown()
-          }
-          }}
+          onClick={this.handleVoteLogic}
           >
         <Icon name='heart' />
         Medior
         </Button>
         <Label as='a' basic color='orange' pointing='left'>
-        {event.mediorCount}   
+        {this.props.currentMediorCount}  
         </Label>  
         </Button> 
     )
   }
 }
 
-export default SubCategoryButtonMedior */
+export default SubCategoryButtonMedior

@@ -1,32 +1,43 @@
-/* import React, { Component } from 'react'
+import React, { Component } from 'react'
 import { Button, Icon, Label } from 'semantic-ui-react';
 
 
-class SubCategoryButtonSenior extends Component {
-  async handleAsyncUpvote() {
+class SubCategoryButtonSenior extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.handleAsyncUpvote = this.handleAsyncUpvote.bind(this)
+    this.handleAsyncDownvote = this.handleAsyncDownvote.bind(this)
+    this.handleAsyncBackVoteUp = this.handleAsyncBackVoteUp.bind(this)
+    this.handleAsyncBackVoteDown = this.handleAsyncBackVoteDown.bind(this)
+    this.handleVoteLogic = this.handleVoteLogic.bind(this)
+  }
+
+  handleAsyncUpvote = async () => {
     const name = 'senior'
     const { 
       event,
       onClickEventsUp,
       handleUpVote,
-      updateCategoryUp,
+      updateCategoryUp, 
       handleCategory
     } = this.props
     
     await handleCategory(name)
-    await handleUpVote() 
+    await handleUpVote()
     await updateCategoryUp(event)
     await onClickEventsUp(event)
   }
 
-  async handleAsyncDownvote() {
+
+  handleAsyncDownvote = async () => {
     const name = 'senior'
     const { 
       event,
       handleCategory,
       onClickEventsDown, 
       handleDownVote, 
-      updateCategoryDown
+      updateCategoryDown,
     } = this.props
     await handleCategory(name)
     await handleDownVote()
@@ -34,7 +45,7 @@ class SubCategoryButtonSenior extends Component {
     await onClickEventsDown(event)
   }
 
-  async handleAsyncBackVoteUp() {
+  handleAsyncBackVoteUp = async () => {
     const name = 'senior'
     const { 
       event, 
@@ -49,7 +60,7 @@ class SubCategoryButtonSenior extends Component {
     await onClickEventsBackVoteUp(event)
   }
 
-  async handleAsyncBackVoteDown() {
+  handleAsyncBackVoteDown = async () => {
     const name = 'senior'
     const { 
       event, 
@@ -64,36 +75,40 @@ class SubCategoryButtonSenior extends Component {
     await onClickEventsBackVoteDown(event)
   }
 
-  render() {
+  handleVoteLogic() {
     const { 
-      event, initialUpvote, upvoted
+      upvoted, initialUpvote
     } = this.props
+    if (!initialUpvote && !upvoted) {
+      return this.handleAsyncUpvote()
+    } else if (initialUpvote && upvoted) {
+      return this.handleAsyncDownvote()
+    } else if (!initialUpvote && upvoted) {
+      return this.handleAsyncBackVoteDown()
+    } else if (initialUpvote && !upvoted)  {
+      return this.handleAsyncBackVoteUp()
+    }
+  }
+  
+ 
+
+  render() {
 
     return (
         <Button as='div' labelPosition='right' >
         <Button 
-          color='red'
-          onClick={()  => {
-          if (!initialUpvote && !upvoted) {
-            return this.handleAsyncUpvote()
-          } else if (initialUpvote && upvoted) {
-            return this.handleAsyncDownvote()
-          } else if (!initialUpvote && upvoted) {
-            return this.handleAsyncBackVoteUp()
-          } else if (initialUpvote && !upvoted)  {
-            return this.handleAsyncBackVoteDown()
-          }
-          }}
-        >
+          color='green'
+          onClick={this.handleVoteLogic}
+          >
         <Icon name='heart' />
-        senior
+        Senior
         </Button>
-        <Label as='a' basic color='red' pointing='left'>
-        {event.seniorCount}   
+        <Label as='a' basic color='green' pointing='left'>
+        {this.props.currentSeniorCount}  
         </Label>  
         </Button> 
     )
   }
 }
 
-export default SubCategoryButtonSenior */
+export default SubCategoryButtonSenior
