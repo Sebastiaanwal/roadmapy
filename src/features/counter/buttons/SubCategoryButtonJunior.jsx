@@ -3,6 +3,8 @@ import { Button, Icon, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import {updateEvent} from '../../event/eventActions';
 import {updatingCategoryLike} from '../../user/userActions';
+import { debounce } from "debounce";
+
 
 const actions = {
   updateEvent, 
@@ -18,10 +20,6 @@ class SubCategoryButtonJunior extends React.Component {
       updatingCategoryLike(newEvent)
     }
   }
-  //componentdidupdate gebruiken. prevprops versus this.props. 
-  //Geen state mirroren!! antipatern = bugs
-  //Geen getstatefromderivedstate nodig!! Dit wordt alleen gebruktk om local state te update met props.
-
   
   render() {
     return (

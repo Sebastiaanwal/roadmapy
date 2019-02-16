@@ -8,6 +8,8 @@ import {updatingCategoryLike} from '../../user/userActions'
 import SubCategoryButtonJunior from './SubCategoryButtonJunior'
 import SubCategoryButtonMedior from './SubCategoryButtonMedior'
 import SubCategoryButtonSenior from './SubCategoryButtonSenior'
+import { debounce } from "debounce";
+
 
 const actions = {
   updateEvent, 
@@ -30,7 +32,6 @@ class SubCategoryButton extends React.Component {
       super(props)
 
       this.state = {
-        //anti-pattern, props worden echter alleen bij render als initialstate gebruikt.
         currentUpvoteJunior: {},
         currentUpvoteMedior: {},
         currentUpvoteSenior: {},

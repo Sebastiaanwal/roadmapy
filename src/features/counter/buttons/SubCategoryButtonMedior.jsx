@@ -3,6 +3,8 @@ import { Button, Icon, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import {updateEvent} from '../../event/eventActions';
 import {updatingCategoryLike} from '../../user/userActions';
+import { debounce } from "debounce";
+
 
 const actions = {
   updateEvent, 

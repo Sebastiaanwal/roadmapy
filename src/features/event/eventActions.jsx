@@ -5,6 +5,7 @@ import { createNewEvent } from '../../app/common/util/helpers';
 import moment from 'moment';
 import firebase from '../../app/config/firebase';
 import compareAsc from 'date-fns/compare_asc';
+import { debounce } from "debounce";
 
 export const createEvent = event => {
   return async (dispatch, getState, { getFirestore }) => {
@@ -33,7 +34,7 @@ export const createEvent = event => {
 };
 
 export const updateEvent = event => {
-  return async (dispatch, getState) => {
+  return debounce(async (dispatch, getState) => {
     dispatch(asyncActionStart());
     const firestore = firebase.firestore();
     
@@ -65,7 +66,7 @@ export const updateEvent = event => {
       dispatch(asyncActionError());
       toastr.error('Oops', 'Something went wrong');
     }
-  };
+  }, 5000)
 };
 
 

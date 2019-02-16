@@ -4,6 +4,7 @@ import cuid from 'cuid';
 import { asyncActionError, asyncActionStart, asyncActionFinish } from '../async/asyncActions';
 import firebase from '../../app/config/firebase';
 import { FETCH_EVENTS } from '../event/eventConstants';
+import { debounce } from "debounce";
 
 export const updateProfile = user => async (dispatch, getState, { getFirebase }) => {
   const firebase = getFirebase();
@@ -125,7 +126,7 @@ export const setMainPhoto = photo => async (dispatch, getState) => {
   }
 };
 
-export const updatingCategoryLike = (event) => async (dispatch, getState) => {
+export const updatingCategoryLike = (event) => debounce(async (dispatch, getState) => {
   dispatch(asyncActionStart())
   const firestore = firebase.firestore();
   const user = firebase.auth().currentUser;
@@ -165,7 +166,7 @@ export const updatingCategoryLike = (event) => async (dispatch, getState) => {
     dispatch(asyncActionError())
     toastr.error('Oops', 'Problem signing up to event');
   }
-};
+}, 5000)
 
 export const cancelGoingToEvent = event => async (dispatch, getState, { getFirestore }) => {
   const firestore = getFirestore();
