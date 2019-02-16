@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import debounce from 'debounce'
 import { Button, Icon, Label, Segment } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,7 +7,6 @@ import {updatingCategoryLike} from '../../user/userActions'
 import SubCategoryButtonJunior from './SubCategoryButtonJunior'
 import SubCategoryButtonMedior from './SubCategoryButtonMedior'
 import SubCategoryButtonSenior from './SubCategoryButtonSenior'
-import { debounce } from "debounce";
 
 
 const actions = {
