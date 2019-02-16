@@ -136,9 +136,10 @@ export const updatingCategoryLike = (event) => async (dispatch, getState) => {
     photoURL: profile.photoURL || '/assets/user.png',
     displayName: profile.displayName,
     host: false,
-    like: event.subCategory,
     id: user.uid, 
-    upvoted: event.upvoted
+    juniorVote: event.juniorVote,
+    mediorVote: event.mediorVote, 
+    seniorVote: event.seniorVote
     };
   try {
     let eventDocRef = firestore.collection('events').doc(event.id);

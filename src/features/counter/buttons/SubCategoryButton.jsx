@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import debounce from 'debounce'
 import { Button, Icon, Label, Segment } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import {updateEvent} from '../../event/eventActions';
 import {updatingCategoryLike} from '../../user/userActions'
 import SubCategoryButtonJunior from './SubCategoryButtonJunior'
@@ -14,227 +15,255 @@ const actions = {
 };
 
 class SubCategoryButton extends React.Component {
+  static propTypes = {
+    juniorVote: PropTypes.bool,
+    mediorVote: PropTypes.bool,
+    seniorVote: PropTypes.bool,
+
+    juniorCount: PropTypes.number,
+    mediorCount: PropTypes.number,
+    seniorCount: PropTypes.number,
+
+  }
+
     constructor(props) {
       super(props)
 
       this.state = {
-        currentUpvoteJunior: this.props.event.juniorVote,
-        currentUpvoteMedior: this.props.event.mediorVote,
-        currentUpvoteSenior: this.props.event.seniorVote,
+        //anti-pattern, props worden echter alleen bij render als initialstate gebruikt.
+        currentUpvoteJunior: {},
+        currentUpvoteMedior: {},
+        currentUpvoteSenior: {},
 
-        initialUpvoteJunior: this.props.event.juniorVote,
-        initialUpvoteMedior: this.props.event.mediorVote,
-        initialUpvoteSenior: this.props.event.seniorVote,
-
-        currentJuniorCount: this.props.event.juniorCount,
-        currentMediorCount: this.props.event.mediorCount,
-        currentSeniorCount: this.props.event.seniorCount,
-
-        initialCountJunior: this.props.event.juniorCount,
-        initialCountMedior: this.props.event.mediorCount,
-        initialCountSenior: this.props.event.seniorCount,
-
-        initialSubCategory: this.props.event.subCategory,
-        currentSubCategory: this.props.event.subCategory
+        currentJuniorCount: {},
+        currentMediorCount: {},
+        currentSeniorCount: {}
       };
 
-      this.handleCategory = this.handleCategory.bind(this);
-      this.handleUpVote = this.handleUpVote.bind(this);
-      this.handleDownVote = this.handleDownVote.bind(this);
-      this.handleBackVoteUp = this.handleBackVoteUp.bind(this);
-      this.handleBackVoteDown = this.handleBackVoteDown.bind(this);
-      this.updateCategoryUp = this.updateCategoryUp.bind(this);
-      this.onClickEventsUp = this.onClickEventsUp.bind(this)
-      this.updateCategoryDown = this.updateCategoryDown.bind(this)
-      this.onClickEventsDown = this.onClickEventsDown.bind(this)
-      this.updateCategoryBackVote = this.updateCategoryBackVote.bind(this)
-      this.onClickEventsBackVoteUp = this.onClickEventsBackVoteUp.bind(this)
-      this.handleBackVoteDown = this.handleBackVoteDown.bind(this)
-
-    }
-  
-
-  handleCategory(name) {
-      this.setState({
-        currentSubCategory: name
-      })
+      this.handleJuniorClick = this.handleJuniorClick.bind(this);
+      this.handleMediorClick = this.handleMediorClick.bind(this);
+      this.handleSeniorClick = this.handleSeniorClick.bind(this);
     }
 
+    handleJuniorClick() {
+      const {juniorCount, mediorCount, seniorCount} = this.props.event
+      const {juniorVote, mediorVote, seniorVote } = this.props
 
-    juniorClick() {
-      const {currentUpvoteJunior, currentUpvoteMedior, currentUpvoteSenior, 
-        initialUpvoteJunior, initialUpvoteMedior, initialUpvoteSenior
-      } = this.state
+      console.log(juniorCount)
+      console.log(this.props.mediorVote)
       if (
-        currentUpvoteJunior === false
-        && currentUpvoteMedior === false
-        && currentUpvoteSenior === false
+        juniorVote === false
+        && mediorVote === false
+        && seniorVote === false
         ) {
           return this.setState({
-          currentJuniorCount: initialCountMedior + 1,
-          currentMediorCount: initialCountMedior,
-          currentSeniorCount: initialCountSenior,
-          currentUpvoteJunior: true
+          currentJuniorCount: juniorCount + 1,
+          currentMediorCount: mediorCount,
+          currentSeniorCount: seniorCount,
+          currentUpvoteJunior: true,
+          currentUpvoteMedior: mediorVote,
+          currentUpvoteSenior: seniorVote
           })
         } else if (
-        currentUpvoteJunior === true
-        && currentUpvoteMedior === false
-        && currentUpvoteSenior === false
+          juniorVote === true
+        && mediorVote === false
+        && seniorVote === false
           ) {
           return this.setState({
-            currentJuniorCount: currentJuniorCount - 1,
-            currentMediorCount: initialCountMedior,
-            currentSeniorCount: initialCountSenior,
-            currentUpvoteJunior: false
+            currentJuniorCount: juniorCount -1,
+            currentMediorCount: mediorCount,
+            currentSeniorCount: seniorCount,
+            currentUpvoteJunior: false,
+            currentUpvoteMedior: mediorVote,
+            currentUpvoteSenior: seniorVote
             })
         } else if (
-          currentUpvoteJunior === false
-          && currentUpvoteMedior === true
-          && currentUpvoteSenior === false
+          juniorVote === false
+          && mediorVote === true
+          && seniorVote === false
           ) {
           return this.setState({
-            currentJuniorCount: currentJuniorCount + 1,
-            currentMediorCount: initialCountMedior - 1,
-            currentSeniorCount: initialCountSenior,
+            currentJuniorCount: juniorCount + 1,
+            currentMediorCount: mediorCount -1,
+            currentSeniorCount: seniorCount,
             currentUpvoteJunior: true,
-            currentUpvoteMedior: false
+            currentUpvoteMedior: false,
+            currentUpvoteSenior: seniorVote
             })
          } else if (
-          currentUpvoteJunior === false
-          && currentUpvoteMedior === false
-          && currentUpvoteSenior === true
+          juniorVote === false
+          && mediorVote === false
+          && seniorVote === true
           ) {
           return this.setState({
-            currentJuniorCount: currentJuniorCount + 1,
-            currentMediorCount: initialCountMedior,
-            currentSeniorCount: initialCountSenior - 1,
+            currentJuniorCount: juniorCount + 1,
+            currentMediorCount: mediorCount,
+            currentSeniorCount: seniorCount -1,
             currentUpvoteJunior: true,
+            currentUpvoteMedior: mediorVote,
             currentUpvoteSenior: false
             })
           } 
         }
 
+    handleMediorClick() {
+      const {juniorCount, mediorCount, seniorCount} = this.props.event
+      const {juniorVote, mediorVote, seniorVote } = this.props
 
+      if (
+        juniorVote === false
+        && mediorVote === false
+        && seniorVote === false
+        ) {
+          this.setState({
+          currentJuniorCount: juniorCount,
+          currentMediorCount: mediorCount + 1,
+          currentSeniorCount: seniorCount,
+          currentUpvoteJunior: juniorVote,
+          currentUpvoteMedior: true,
+          currentUpvoteSenior: seniorVote
+          });
+        } else if (
+          juniorVote === false
+        && mediorVote === true
+        && seniorVote === false
+          ) {
+          return this.setState({
+            currentJuniorCount: juniorCount,
+            currentMediorCount: mediorCount -1,
+            currentSeniorCount: seniorCount,
+            currentUpvoteJunior: juniorVote,
+            currentUpvoteMedior: false,
+            currentUpvoteSenior: seniorVote
+            })
+        } else if (
+          juniorVote === true
+          && mediorVote === false
+          && seniorVote === false
+          ) {
+          return this.setState({
+            currentJuniorCount: juniorCount -1,
+            currentMediorCount: mediorCount + 1,
+            currentSeniorCount: seniorCount,
+            currentUpvoteJunior: false,
+            currentUpvoteMedior: true,
+            currentUpvoteSenior: seniorVote
+            })
+         } else if (
+          juniorVote === false
+          && mediorVote === false
+          && seniorVote === true
+          ) {
+          return this.setState({
+            currentJuniorCount: juniorCount,
+            currentMediorCount: mediorCount + 1,
+            currentSeniorCount: seniorCount -1,
+            currentUpvoteJunior: juniorVote,
+            currentUpvoteMedior: true,
+            currentUpvoteSenior: false
+            })
+            }
+        }
 
+      handleSeniorClick() {
 
-updateCategoryUp = (event) => {
-    return {
-      ...event,
-      subCategory: this.state.currentSubCategory,
-      juniorCount: this.state.currentJuniorCount + 1, 
-      upvoted: this.state.upvoted
-    }
-}
+        const {juniorCount, mediorCount, seniorCount} = this.props.event
+        const {juniorVote, mediorVote, seniorVote } = this.props
 
-updateCategoryDown = () => {
-  const {event} = this.props
-    return {
-      ...event,
-      subCategory: this.state.currentSubCategory,
-      juniorCount: this.state.currentJuniorCount - 1, 
-      upvoted: this.state.upvoted
-    }
-  
-}
+          if (
+            juniorVote === false
+            && mediorVote === false
+            && seniorVote === false
+            ) {
+              return this.setState({
+              currentJuniorCount: juniorCount,
+              currentMediorCount: mediorCount,
+              currentSeniorCount: seniorCount + 1,
+              currentUpvoteJunior: juniorVote,
+              currentUpvoteMedior: mediorVote,
+              currentUpvoteSenior: true
+              })
+            } else if (
+              juniorVote === false
+            && mediorVote === false
+            && seniorVote === true
+              ) {
+              return this.setState({
+                currentJuniorCount: juniorCount,
+                currentMediorCount: mediorCount,
+                currentSeniorCount: seniorCount -1,
+                currentUpvoteJunior: juniorVote,
+                currentUpvoteMedior: mediorVote,
+                currentUpvoteSenior: false
+                })
+            } else if (
+              juniorVote === false
+              && mediorVote === true
+              && seniorVote === false
+              ) {
+              return this.setState({
+                currentJuniorCount: juniorCount,
+                currentMediorCount: mediorCount -1,
+                currentSeniorCount: seniorCount + 1,
+                currentUpvoteJunior: juniorVote,
+                currentUpvoteSenior: true,
+                currentUpvoteMedior: false
+                })
+             } else if (
+              juniorVote === true
+              && mediorVote === false
+              && seniorVote === false
+              ) {
+              return this.setState({
+                currentJuniorCount: juniorCount -1,
+                currentMediorCount: mediorCount,
+                currentSeniorCount: seniorCount + 1,
+                currentUpvoteJunior: false,
+                currentUpvoteMedior: mediorVote,
+                currentUpvoteSenior: true
+                })
+              } 
+            }
 
-updateCategoryBackVote = () => {
-  const {event} = this.props
-
-    return {
-      ...event,
-      subCategory: this.state.currentSubCategory,
-      juniorCount: this.state.initialCountJunior, 
-      upvoted: this.state.upvoted 
-    }
-  
-}
-
-
-onClickEventsUp = (event, handleUpvote, updateCategoryUp) => {
-  const { updateEvent, updatingCategoryLike} = this.props;
-    
-      updateEvent(event)
-      updatingCategoryLike(event)
-  }
-
-onClickEventsDown = (event) => {
-    const { updateEvent, updatingCategoryLike} = this.props;
-     
-    updateEvent(event)
-    updatingCategoryLike(event)
-  }
-
-onClickEventsBackVoteUp = (event) => {
-    const { updateEvent, updatingCategoryLike} = this.props;
-     
-    updateEvent(event)
-    updatingCategoryLike(event)
-  }
-//this van updatecategory ook via propssss in knop!!!
-onClickEventsBackVoteDown = (event) => {
-    const { updateEvent, updatingCategoryLike} = this.props;
-  
-    updateEvent(event)
-    updatingCategoryLike(event)
-  }
-  
 
   render() {
-    const {event} = this.props;
+    const { currentUpvoteJunior, currentUpvoteMedior, currentUpvoteSenior,
+      currentJuniorCount, currentMediorCount, currentSeniorCount } = this.state
+    const juniorVote = currentUpvoteJunior
+    const mediorVote = currentUpvoteMedior
+    const seniorVote = currentUpvoteSenior
+    
+    const juniorCount = currentJuniorCount
+    const mediorCount = currentMediorCount
+    const seniorCount = currentSeniorCount
+    const newProps = {
+      ...this.props.event, 
+      juniorVote, 
+      mediorVote,
+      seniorVote,
+      juniorCount,
+      mediorCount,
+      seniorCount
+    }
+
     return (
       <Segment clearing>
       <SubCategoryButtonJunior
-        event={event}
-        handleCategory={this.handleCategory}
-        onClickEventsUp={this.onClickEventsUp}
-        onClickEventsDown={this.onClickEventsDown}
-        onClickEventsBackVoteUp={this.onClickEventsBackVoteUp}
-        onClickEventsBackVoteDown={this.onClickEventsBackVoteDown}
-
-        juniorClick={this.juniorClick}
-       
-        updateCategoryUp={this.updateCategoryUp}
-        updateCategoryDown={this.updateCategoryDown}
-        updateCategoryBackVote={this.updateCategoryBackVote}
-        currentJuniorCount={this.state.currentJuniorCount}
+        event={this.props.event}
+        newEvent={newProps}
+        juniorClick={this.handleJuniorClick}
       />
       
       <SubCategoryButtonMedior
-        event={event}
-        handleCategory={this.handleCategory}
-        onClickEventsUp={this.onClickEventsUp}
-        onClickEventsDown={this.onClickEventsDown}
-        onClickEventsBackVoteUp={this.onClickEventsBackVoteUp}
-        onClickEventsBackVoteDown={this.onClickEventsBackVoteDown}
-        initialUpvote={this.state.initialUpvote}
-        upvoted={this.state.upvoted}
-        handleUpVote={this.handleUpVote}
-        handleDownVote={this.handleDownVote}
-        handleBackVoteUp={this.handleBackVoteUp}
-        handleBackVoteDown={this.handleBackVoteDown}
-        updateCategoryUp={this.updateCategoryUp}
-        updateCategoryDown={this.updateCategoryDown}
-        updateCategoryBackVote={this.updateCategoryBackVote}
-        currentMediorCount={this.state.currentMediorCount}
+        event={this.props.event}
+        newEvent={newProps}
+        mediorClick={this.handleMediorClick}
       />
 
       <SubCategoryButtonSenior
-        event={event}
-        handleCategory={this.handleCategory}
-        onClickEventsUp={this.onClickEventsUp}
-        onClickEventsDown={this.onClickEventsDown}
-        onClickEventsBackVoteUp={this.onClickEventsBackVoteUp}
-        onClickEventsBackVoteDown={this.onClickEventsBackVoteDown}
-        initialUpvote={this.state.initialUpvote}
-        upvoted={this.state.upvoted}
-        handleUpVote={this.handleUpVote}
-        handleDownVote={this.handleDownVote}
-        handleBackVoteUp={this.handleBackVoteUp}
-        handleBackVoteDown={this.handleBackVoteDown}
-        updateCategoryUp={this.updateCategoryUp}
-        updateCategoryDown={this.updateCategoryDown}
-        currentSeniorCount={this.state.currentSeniorCount}
-        updateCategoryBackVote={this.updateCategoryBackVote}
+        event={this.props.event}
+        newEvent={newProps}
+        seniorClick={this.handleSeniorClick}
       />
       </Segment>
     )

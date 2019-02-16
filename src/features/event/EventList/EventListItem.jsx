@@ -16,26 +16,36 @@ import { objectToArray } from '../../../app/common/util/helpers';
 
 const mapState = (state, ownProps) => {
   let eventState = {};
-  let upVoted = {}
+  let juniorVote = {};
+  let mediorVote = {};
+  let seniorVote = {};
 
   const eventStateProp = state.firestore.ordered.events.filter(e => e.id === ownProps.event.id)
   eventState = eventStateProp[0];
  
   if (eventState.likes) {
   const findLikeId = objectToArray(eventState.likes).filter(e => e.id === ownProps.auth.uid)
-  upVoted = findLikeId[0].upvoted
-  } 
+  juniorVote = findLikeId[0].juniorVote
+  mediorVote = findLikeId[0].mediorVote
+  seniorVote = findLikeId[0].seniorVote
+  } else {
+    juniorVote = false
+    mediorVote = false
+    seniorVote = false
+  }
 
   return {
    eventState, 
-   upVoted
+   juniorVote, 
+   mediorVote,
+   seniorVote
   }
 };
 
 
 class EventListItem extends Component {
   render() {
-    const {event, eventState, authenticated, upVoted} = this.props
+    const {event, eventState, authenticated, juniorVote, mediorVote, seniorVote } = this.props
 
     return (
     <Grid columns={2} divided>
@@ -71,8 +81,10 @@ class EventListItem extends Component {
         <Segment clearing>
           <SubCategoryButton 
           event={eventState} 
+          juniorVote={juniorVote} 
+          mediorVote={mediorVote} 
+          seniorVote={seniorVote} 
           authenticated={authenticated}
-          upVoted={upVoted}
           />
 
           <Button as={Link} to={`/event/${event.id}`} color="teal" floated="right" content="View" />
