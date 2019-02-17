@@ -126,7 +126,7 @@ export const setMainPhoto = photo => async (dispatch, getState) => {
   }
 };
 
-export const updatingCategoryLike = (event) => debounce(async (dispatch, getState) => {
+export const updatingCategoryLike = (event) => async (dispatch, getState) => {
   dispatch(asyncActionStart())
   const firestore = firebase.firestore();
   const user = firebase.auth().currentUser;
@@ -166,7 +166,7 @@ export const updatingCategoryLike = (event) => debounce(async (dispatch, getStat
     dispatch(asyncActionError())
     toastr.error('Oops', 'Problem signing up to event');
   }
-}, 5000)
+}
 
 export const cancelGoingToEvent = event => async (dispatch, getState, { getFirestore }) => {
   const firestore = getFirestore();

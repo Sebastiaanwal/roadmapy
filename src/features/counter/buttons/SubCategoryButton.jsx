@@ -7,6 +7,7 @@ import {updatingCategoryLike} from '../../user/userActions'
 import SubCategoryButtonJunior from './SubCategoryButtonJunior'
 import SubCategoryButtonMedior from './SubCategoryButtonMedior'
 import SubCategoryButtonSenior from './SubCategoryButtonSenior'
+import { debounce } from "debounce";
 
 
 const actions = {
@@ -25,11 +26,7 @@ class SubCategoryButton extends React.Component {
     seniorCount: PropTypes.number,
 
   }
-
-    constructor(props) {
-      super(props)
-
-      this.state = {
+      state = {
         currentUpvoteJunior: {},
         currentUpvoteMedior: {},
         currentUpvoteSenior: {},
@@ -39,12 +36,17 @@ class SubCategoryButton extends React.Component {
         currentSeniorCount: {}
       };
 
-      this.handleJuniorClick = this.handleJuniorClick.bind(this);
-      this.handleMediorClick = this.handleMediorClick.bind(this);
-      this.handleSeniorClick = this.handleSeniorClick.bind(this);
+  handleClick = debounce((button) => {
+    if (button === 'junior') {
+      this.handleJuniorClick()
+    } else if (button === 'medior') {
+      this.handleMediorClick()
+    } else if (button === 'senior'){
+      this.handleSeniorClick()
     }
+  }, 1000)
 
-    handleJuniorClick() {
+  handleJuniorClick() {
       const {juniorCount, mediorCount, seniorCount} = this.props.event
       const {juniorVote, mediorVote, seniorVote } = this.props
 
@@ -250,19 +252,19 @@ class SubCategoryButton extends React.Component {
       <SubCategoryButtonJunior
         event={this.props.event}
         newEvent={newProps}
-        juniorClick={this.handleJuniorClick}
+        onClick={this.handleClick}
       />
       
       <SubCategoryButtonMedior
         event={this.props.event}
         newEvent={newProps}
-        mediorClick={this.handleMediorClick}
+        onClick={this.handleClick}
       />
 
       <SubCategoryButtonSenior
         event={this.props.event}
         newEvent={newProps}
-        seniorClick={this.handleSeniorClick}
+        onClick={this.handleClick}
       />
       </Segment>
     )

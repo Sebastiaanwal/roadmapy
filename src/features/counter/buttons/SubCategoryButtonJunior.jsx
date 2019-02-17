@@ -20,13 +20,18 @@ class SubCategoryButtonJunior extends React.Component {
       updatingCategoryLike(newEvent)
     }
   }
+
+  handleChange = () => {
+    const button = 'junior';
+    this.props.onClick(button);            
+}
   
   render() {
     return (
         <Button as='div' labelPosition='right' >
         <Button 
           color='green'
-          onClick={this.props.juniorClick}
+          onClick={this.handleChange}
           >
         <Icon name='heart' />
         Junior

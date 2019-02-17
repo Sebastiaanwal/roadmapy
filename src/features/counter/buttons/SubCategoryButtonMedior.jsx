@@ -20,12 +20,18 @@ class SubCategoryButtonMedior extends React.Component {
     }
   }
 
+  handleChange = () => {
+    const button = 'medior';
+    this.props.onClick(button);            
+}
+
   render() {
+    const button = 'medior'
     return (
         <Button as='div' labelPosition='right' >
         <Button 
           color='orange'
-          onClick={this.props.mediorClick}
+          onClick={this.handleChange}
           >
         <Icon name='heart' />
         Medior

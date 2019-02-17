@@ -34,7 +34,7 @@ export const createEvent = event => {
 };
 
 export const updateEvent = event => {
-  return debounce(async (dispatch, getState) => {
+  return async (dispatch, getState) => {
     dispatch(asyncActionStart());
     const firestore = firebase.firestore();
     
@@ -66,7 +66,7 @@ export const updateEvent = event => {
       dispatch(asyncActionError());
       toastr.error('Oops', 'Something went wrong');
     }
-  }, 5000)
+  }
 };
 
 
