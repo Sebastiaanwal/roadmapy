@@ -5,10 +5,7 @@ import { compose } from 'redux';
 import { firestoreConnect} from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import format from 'date-fns/format'
-import DecrementButton from '../../counter/buttons/DecrementButton'
-import IncrementButton from '../../counter/buttons/IncrementButton'
 import EventListCounter from './EventListCounter'
-import moduleName from '../../counter/buttons/SubCategoryButton'
 import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
 import { objectToArray } from '../../../app/common/util/helpers';
 
