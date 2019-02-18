@@ -16,26 +16,37 @@ const mapState = (state, ownProps) => {
   let juniorVote = {};
   let mediorVote = {};
   let seniorVote = {};
+  let findLikeId = {};
 
   const eventStateProp = state.firestore.ordered.events.filter(e => e.id === ownProps.event.id)
   eventState = eventStateProp[0];
  
   if (eventState.likes) {
-  const findLikeId = objectToArray(eventState.likes).filter(e => e.id === ownProps.auth.uid)
-  juniorVote = findLikeId[0].juniorVote
-  mediorVote = findLikeId[0].mediorVote
-  seniorVote = findLikeId[0].seniorVote
+  findLikeId = objectToArray(eventState.likes).filter(e => e.id === ownProps.auth.uid)
   } else {
     juniorVote = false
     mediorVote = false
     seniorVote = false
   }
 
+  findLikeId = findLikeId[0]
+
+  if (findLikeId) {
+    juniorVote = findLikeId.juniorVote
+    mediorVote = findLikeId.mediorVote
+    seniorVote = findLikeId.seniorVote
+    } else {
+      juniorVote = false
+      mediorVote = false
+      seniorVote = false
+    }
+
   return {
    eventState, 
    juniorVote, 
    mediorVote,
-   seniorVote
+   seniorVote,
+   findLikeId
   }
 };
 
