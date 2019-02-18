@@ -2,9 +2,6 @@ import React from 'react';
 import { Segment, Image, Item, Header, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
-import DecrementButton from '../../counter/buttons/DecrementButton'
-import IncrementButton from '../../counter/buttons/IncrementButton'
-import EventCounter from './EventCounter'
 import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
 
 

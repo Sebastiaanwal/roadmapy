@@ -10,9 +10,11 @@ const actions = {
 };
 
 class SubCategoryButtonMedior extends React.Component {
+
+
   componentDidUpdate(prevProps) {
-    const {updateEvent, updatingCategoryLike, newEvent } = this.props
-    if (prevProps.newEvent.mediorCount !== newEvent.mediorCount && prevProps.newEvent.mediorVote !== newEvent.mediorVote ) {
+    const {updateEvent, updatingCategoryLike, newEvent, clickedCategory } = this.props
+    if (clickedCategory === 'medior' && prevProps.newEvent.mediorCount !== newEvent.mediorCount && prevProps.newEvent.mediorVote !== newEvent.mediorVote ) {
       updateEvent(newEvent)
       updatingCategoryLike(newEvent)
     }

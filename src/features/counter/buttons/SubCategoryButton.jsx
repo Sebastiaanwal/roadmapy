@@ -33,20 +33,22 @@ class SubCategoryButton extends React.Component {
 
         currentJuniorCount: {},
         currentMediorCount: {},
-        currentSeniorCount: {}
+        currentSeniorCount: {},
+
+        clickedCategory: {}
       };
 
   handleClick = debounce((button) => {
     if (button === 'junior') {
-      this.handleJuniorClick()
+      this.handleJuniorClick(button)
     } else if (button === 'medior') {
-      this.handleMediorClick()
+      this.handleMediorClick(button)
     } else if (button === 'senior'){
-      this.handleSeniorClick()
+      this.handleSeniorClick(button)
     }
-  }, 1000)
+  }, 2000)
 
-  handleJuniorClick() {
+  handleJuniorClick(button) {
       const {juniorCount, mediorCount, seniorCount} = this.props.event
       const {juniorVote, mediorVote, seniorVote } = this.props
 
@@ -63,7 +65,8 @@ class SubCategoryButton extends React.Component {
           currentSeniorCount: seniorCount,
           currentUpvoteJunior: true,
           currentUpvoteMedior: mediorVote,
-          currentUpvoteSenior: seniorVote
+          currentUpvoteSenior: seniorVote,
+          clickedCategory: button
           })
         } else if (
           juniorVote === true
@@ -76,7 +79,8 @@ class SubCategoryButton extends React.Component {
             currentSeniorCount: seniorCount,
             currentUpvoteJunior: false,
             currentUpvoteMedior: mediorVote,
-            currentUpvoteSenior: seniorVote
+            currentUpvoteSenior: seniorVote,
+            clickedCategory: button
             })
         } else if (
           juniorVote === false
@@ -89,7 +93,8 @@ class SubCategoryButton extends React.Component {
             currentSeniorCount: seniorCount,
             currentUpvoteJunior: true,
             currentUpvoteMedior: false,
-            currentUpvoteSenior: seniorVote
+            currentUpvoteSenior: seniorVote,
+            clickedCategory: button
             })
          } else if (
           juniorVote === false
@@ -102,12 +107,13 @@ class SubCategoryButton extends React.Component {
             currentSeniorCount: seniorCount -1,
             currentUpvoteJunior: true,
             currentUpvoteMedior: mediorVote,
-            currentUpvoteSenior: false
+            currentUpvoteSenior: false,
+            clickedCategory: button
             })
           } 
         }
 
-    handleMediorClick() {
+    handleMediorClick(button) {
       const {juniorCount, mediorCount, seniorCount} = this.props.event
       const {juniorVote, mediorVote, seniorVote } = this.props
 
@@ -122,7 +128,8 @@ class SubCategoryButton extends React.Component {
           currentSeniorCount: seniorCount,
           currentUpvoteJunior: juniorVote,
           currentUpvoteMedior: true,
-          currentUpvoteSenior: seniorVote
+          currentUpvoteSenior: seniorVote,
+          clickedCategory: button
           });
         } else if (
           juniorVote === false
@@ -135,7 +142,8 @@ class SubCategoryButton extends React.Component {
             currentSeniorCount: seniorCount,
             currentUpvoteJunior: juniorVote,
             currentUpvoteMedior: false,
-            currentUpvoteSenior: seniorVote
+            currentUpvoteSenior: seniorVote,
+            clickedCategory: button
             })
         } else if (
           juniorVote === true
@@ -148,7 +156,8 @@ class SubCategoryButton extends React.Component {
             currentSeniorCount: seniorCount,
             currentUpvoteJunior: false,
             currentUpvoteMedior: true,
-            currentUpvoteSenior: seniorVote
+            currentUpvoteSenior: seniorVote,
+            clickedCategory: button
             })
          } else if (
           juniorVote === false
@@ -161,12 +170,13 @@ class SubCategoryButton extends React.Component {
             currentSeniorCount: seniorCount -1,
             currentUpvoteJunior: juniorVote,
             currentUpvoteMedior: true,
-            currentUpvoteSenior: false
+            currentUpvoteSenior: false,
+            clickedCategory: button
             })
             }
         }
 
-      handleSeniorClick() {
+      handleSeniorClick(button) {
 
         const {juniorCount, mediorCount, seniorCount} = this.props.event
         const {juniorVote, mediorVote, seniorVote } = this.props
@@ -182,7 +192,8 @@ class SubCategoryButton extends React.Component {
               currentSeniorCount: seniorCount + 1,
               currentUpvoteJunior: juniorVote,
               currentUpvoteMedior: mediorVote,
-              currentUpvoteSenior: true
+              currentUpvoteSenior: true,
+              clickedCategory: button
               })
             } else if (
               juniorVote === false
@@ -195,7 +206,8 @@ class SubCategoryButton extends React.Component {
                 currentSeniorCount: seniorCount -1,
                 currentUpvoteJunior: juniorVote,
                 currentUpvoteMedior: mediorVote,
-                currentUpvoteSenior: false
+                currentUpvoteSenior: false,
+                clickedCategory: button
                 })
             } else if (
               juniorVote === false
@@ -208,7 +220,8 @@ class SubCategoryButton extends React.Component {
                 currentSeniorCount: seniorCount + 1,
                 currentUpvoteJunior: juniorVote,
                 currentUpvoteSenior: true,
-                currentUpvoteMedior: false
+                currentUpvoteMedior: false,
+                clickedCategory: button
                 })
              } else if (
               juniorVote === true
@@ -221,8 +234,21 @@ class SubCategoryButton extends React.Component {
                 currentSeniorCount: seniorCount + 1,
                 currentUpvoteJunior: false,
                 currentUpvoteMedior: mediorVote,
-                currentUpvoteSenior: true
+                currentUpvoteSenior: true,
+                clickedCategory: button
                 })
+              } 
+            }
+
+            chooseSubCategory(juniorCount, mediorCount, seniorCount) {
+              if (juniorCount > mediorCount && juniorCount > seniorCount ) {
+                return 'junior'
+              } else if (mediorCount > juniorCount && mediorCount > seniorCount) {
+                return 'medior'
+              } else if (seniorCount > juniorCount && seniorCount > mediorCount ) {
+                return 'senior'
+              } else {
+                return 'evencount'
               } 
             }
 
@@ -237,6 +263,11 @@ class SubCategoryButton extends React.Component {
     const juniorCount = currentJuniorCount
     const mediorCount = currentMediorCount
     const seniorCount = currentSeniorCount
+
+    const subCategory = this.chooseSubCategory(currentJuniorCount, currentMediorCount, currentSeniorCount)
+
+
+    const totalCount = juniorCount + mediorCount + seniorCount
     const newProps = {
       ...this.props.event, 
       juniorVote, 
@@ -244,24 +275,29 @@ class SubCategoryButton extends React.Component {
       seniorVote,
       juniorCount,
       mediorCount,
-      seniorCount
-    }
+      seniorCount, 
+      totalCount,
+      subCategory
+      }
 
     return (
       <Segment clearing>
       <SubCategoryButtonJunior
+        clickedCategory={this.state.clickedCategory}
         event={this.props.event}
         newEvent={newProps}
         onClick={this.handleClick}
       />
       
       <SubCategoryButtonMedior
+        clickedCategory={this.state.clickedCategory}
         event={this.props.event}
         newEvent={newProps}
         onClick={this.handleClick}
       />
 
       <SubCategoryButtonSenior
+        clickedCategory={this.state.clickedCategory}
         event={this.props.event}
         newEvent={newProps}
         onClick={this.handleClick}

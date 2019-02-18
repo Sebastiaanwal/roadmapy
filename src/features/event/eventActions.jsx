@@ -14,18 +14,23 @@ export const createEvent = event => {
     const photoURL = getState().firebase.profile.photoURL;
     let newEvent = createNewEvent(user, photoURL, event);
     try {
-      let createdEvent = await firestore.add(`events`, {...newEvent, 
-        count: 0,
-        juniorCount: 0, 
-        mediorCount: 0, 
-        seniorCount: 0
-      });
+      let createdEvent = await firestore.add(`events`, {...newEvent});
       await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
         eventId: createdEvent.id,
         userUid: user.uid,
         eventDate: event.date,
         host: true
       });
+      await firestore.set(`event_likes/${createdEvent.id}_${user.uid}`, {
+        eventId: createdEvent.id,
+        userUid: user.uid,
+        eventDate: event.date,
+        host: true,
+        juniorVote: event.juniorVote,
+        mediorVote: event.mediorVote,
+        seniorVote: event.seniorVote
+      });
+
       toastr.success('Success', 'Event has been created');
     } catch (error) {
       toastr.error('Oops', 'Something went wrong');
@@ -129,24 +134,24 @@ export const addEventComment = (eventId, values, parentId) =>
       ? (query = eventsRef
           .where('category', '==', category)
           .where('subCategory', '==', subCategory  )
-          .orderBy('count', 'desc')
+          .orderBy('totalCount', 'desc')
           .startAfter(startAfter)
           .limit(2))
       : (query = eventsRef
         .where('category', '==', category)
         .where('subCategory', '==', subCategory )
-        .orderBy('count', 'desc')
+        .orderBy('totalCount', 'desc')
         .limit(2))
         } else {
           lastEvent
       ? (query = eventsRef
           .where('category', '==', category)
-          .orderBy('count', 'desc')
+          .orderBy('totalCount', 'desc')
           .startAfter(startAfter)
           .limit(2))
       : (query = eventsRef
         .where('category', '==', category)
-        .orderBy('count', 'desc')
+        .orderBy('totalCount', 'desc')
         .limit(2))
         }
         let querySnap = await query.get();

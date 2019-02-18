@@ -9,7 +9,7 @@ class EventListCounter extends Component {
     const { event } = this.props;
 
     return (
-      <div className="ui right pointing grey basic label">{event.count}</div>
+      <div className="ui right pointing grey basic label">{event.totalCount}</div>
     )
   }
 }

@@ -13,6 +13,7 @@ import {
   hasLengthGreaterThan
 } from 'revalidate';
 import { createEvent, updateEvent, cancelToggle } from '../eventActions';
+import {updatingCategoryLike} from '../../user/userActions'
 import TextInput from '../../../app/common/form/TextInput';
 import TextArea from '../../../app/common/form/TextArea';
 import SelectInput from '../../../app/common/form/SelectInput';
@@ -36,7 +37,8 @@ const mapState = (state, ownProps) => {
 const actions = {
   createEvent,
   updateEvent,
-  cancelToggle
+  cancelToggle,
+  updatingCategoryLike
 };
 
 const category = [
@@ -114,7 +116,43 @@ class EventForm extends Component {
       });
   };
 
-  onFormSubmit = values => {
+  initalCountSubCategory = values => {
+    let newValues
+    const totalCount = 1
+    if (values.subCategory === 'junior') {
+      const juniorCount = 1
+      const mediorCount = 0
+      const seniorCount = 0
+      const juniorVote = true
+      const mediorVote = false
+      const seniorVote = false
+      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote}
+    } else if (values.subCategory === 'medior') {
+      const juniorCount = 0
+      const mediorCount = 1
+      const seniorCount = 0
+      const juniorVote = false
+      const mediorVote = true
+      const seniorVote = false
+      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote }
+    } else if (values.subCategory === 'senior') {
+      const juniorCount = 0
+      const mediorCount = 0
+      const seniorCount = 1
+      const juniorVote = false
+      const mediorVote = false
+      const seniorVote = true
+      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote}
+    } return {
+      newValues
+    }
+  }
+
+  onFormSubmit = async values => {
+    console.log(values)
+    const newCountValues = this.initalCountSubCategory(values)
+    const newerCountValues = newCountValues.newValues
+
     values.venueLatLng = this.state.venueLatLng;
     if (this.props.initialValues.id) {
       if (Object.keys(values.venueLatLng).length === 0) {
@@ -123,7 +161,8 @@ class EventForm extends Component {
       this.props.updateEvent(values);
       this.props.history.goBack();
     } else {
-      this.props.createEvent(values);
+      //hoe zorg ik ervoor dat gelijk het geneste like object erin komt? net zoals nu gebeurd bij event_attendees??
+      await this.props.createEvent(newerCountValues);
       this.props.history.push('/events');
     }
   };

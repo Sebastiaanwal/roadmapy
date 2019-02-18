@@ -6,6 +6,7 @@ export const objectToArray = (object) => {
   }
 }
 
+
 export const createNewEvent = (user, photoURL, event) => {
   event.date = moment(event.date).toDate();
   return {
@@ -22,7 +23,16 @@ export const createNewEvent = (user, photoURL, event) => {
         photoURL: photoURL || '/assets/user.png',
         displayName: user.displayName,
         host: true
-        
+      }
+    }, 
+    likes: {
+      [user.uid]: {
+        id: user.uid,
+        eventDate: event.date,
+        host: true,
+        juniorVote: event.juniorVote,
+        mediorVote: event.mediorVote,
+        seniorVote: event.seniorVote
       }
     }
   }

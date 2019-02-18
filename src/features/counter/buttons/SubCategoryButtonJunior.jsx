@@ -12,12 +12,15 @@ const actions = {
 
 class SubCategoryButtonJunior extends React.Component {
  
+ 
+
   componentDidUpdate(prevProps) {
-    const {updateEvent, updatingCategoryLike, newEvent } = this.props
-    if (prevProps.newEvent.juniorCount !== newEvent.juniorCount && prevProps.newEvent.juniorVote !== newEvent.juniorVote ) {
+    
+    const {updateEvent, updatingCategoryLike, newEvent, clickedCategory } = this.props
+    if (clickedCategory === 'junior' && prevProps.newEvent.juniorCount !== newEvent.juniorCount && prevProps.newEvent.juniorVote !== newEvent.juniorVote) { 
       updateEvent(newEvent)
       updatingCategoryLike(newEvent)
-    }
+    } 
   }
 
   handleChange = () => {
