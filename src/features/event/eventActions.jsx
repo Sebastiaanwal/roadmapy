@@ -42,7 +42,10 @@ export const updateEvent = event => {
   return async (dispatch, getState) => {
     dispatch(asyncActionStart());
     const firestore = firebase.firestore();
-    
+    //moet hier nog een runTransaction functie bij? 
+    //Concurrency problemen bij upvoting voorkomen?
+    //https://firebase.google.com/docs/firestore/manage-data/transactions
+    //of is met debounce het probleen al genoeg verholpen?
     try {
       let eventDocRef = firestore.collection('events').doc(event.id);
       let dateEqual = compareAsc(getState().firestore.ordered.events[0].date.toDate(), event.date);
@@ -99,18 +102,35 @@ export const addEventComment = (eventId, values, parentId) =>
     const profile = getState().firebase.profile;
     const user = firebase.auth().currentUser;
     let newComment = {
+      ownId: parentId,
       parentId: parentId,
       displayName: profile.displayName,
       photoURL: profile.photoURL || '/assets/user.png',
       uid: user.uid,
       text: values.comment,
-      date: Date.now()
+      date: Date.now(),
+      votes: 0
     }
     try {
       await firebase.push(`event_chat/${eventId}`, newComment)
     } catch (error) {
       console.log(error);
       toastr.error('Oops', 'Problem adding comment')
+    }
+  }
+
+  export const updateEventComment = (eventId, commentId, newCount) => 
+  async (dispatch, getState, {getFirebase}) => {
+    console.log(commentId)
+    const firebase = getFirebase();
+    let newComment = {
+      votes: newCount
+    }
+    try {
+      await firebase.update(`event_chat/${eventId}/${commentId}`, newComment)
+    } catch (error) {
+      console.log(error);
+      toastr.error('Oops', 'Problem updating comment')
     }
   }
 
@@ -133,13 +153,15 @@ export const addEventComment = (eventId, values, parentId) =>
         lastEvent
       ? (query = eventsRef
           .where('category', '==', category)
-          .where('subCategory', '==', subCategory  )
+          .where('subCategory', '==', subCategory || 'evencount' )
+          
           .orderBy('totalCount', 'desc')
           .startAfter(startAfter)
           .limit(2))
       : (query = eventsRef
         .where('category', '==', category)
-        .where('subCategory', '==', subCategory )
+        .where('subCategory', '==', subCategory || 'evencount')
+       
         .orderBy('totalCount', 'desc')
         .limit(2))
         } else {

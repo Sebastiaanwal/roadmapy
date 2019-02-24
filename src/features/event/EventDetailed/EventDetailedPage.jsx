@@ -16,16 +16,44 @@ import { openModal } from '../../modals/modalActions'
 
 const mapState = (state, ownProps) => {
   let event = {};
+  let juniorVote = {};
+  let mediorVote = {};
+  let seniorVote = {};
+  let findLikeId = {};
 
   if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
     event = state.firestore.ordered.events[0];
   }
+
+  if (event.likes) {
+    findLikeId = objectToArray(event.likes).filter(e => e.id === state.firebase.auth.uid)
+    } else {
+      juniorVote = false
+      mediorVote = false
+      seniorVote = false
+    }
+  
+    findLikeId = findLikeId[0]
+  
+    if (findLikeId) {
+      juniorVote = findLikeId.juniorVote
+      mediorVote = findLikeId.mediorVote
+      seniorVote = findLikeId.seniorVote
+      } else {
+        juniorVote = false
+        mediorVote = false
+        seniorVote = false
+      }
 
   return {
     requesting: state.firestore.status.requesting,
     event,
     loading: state.async.loading,
     auth: state.firebase.auth,
+    juniorVote, 
+    mediorVote,
+    seniorVote,
+    findLikeId,
     eventChat:
       !isEmpty(state.firebase.data.event_chat) &&
       objectToArray(state.firebase.data.event_chat[ownProps.match.params.id])
@@ -63,7 +91,7 @@ class EventDetailedPage extends Component {
   }
 
   render() {
-    const { match, requesting, openModal, loading, event, auth, updatingCategoryLike, cancelGoingToEvent, addEventComment, eventChat } = this.props;
+    const { match, requesting, openModal, loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
     const attendees = event && event.attendees && objectToArray(event.attendees).sort(function(a,b) {
       return a.joinDate - b.joinDate
     })
@@ -83,14 +111,22 @@ class EventDetailedPage extends Component {
             loading={loading}
             isHost={isHost}
             isGoing={isGoing}
-            updatingCategoryLike={updatingCategoryLike}
             cancelGoingToEvent={cancelGoingToEvent}
             authenticated={authenticated}
             openModal={openModal}
+            juniorVote={juniorVote} 
+            mediorVote={mediorVote} 
+            seniorVote={seniorVote} 
           />
           <EventDetailedInfo event={event} />
           {authenticated &&
-          <EventDetailedChat eventChat={chatTree} addEventComment={addEventComment} eventId={event.id} />}
+          <EventDetailedChat 
+          
+          eventChat={chatTree}
+          addEventComment={addEventComment} 
+          eventId={event.id} 
+          uid={auth.uid}
+          />}
         </Grid.Column>
         <Grid.Column width={6}>
           <EventDetailedSidebar attendees={attendees} />

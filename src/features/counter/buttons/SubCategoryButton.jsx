@@ -59,7 +59,7 @@ class SubCategoryButton extends React.Component {
         && mediorVote === false
         && seniorVote === false
         ) {
-          return this.setState({
+           this.setState({
           currentJuniorCount: juniorCount + 1,
           currentMediorCount: mediorCount,
           currentSeniorCount: seniorCount,
@@ -73,7 +73,7 @@ class SubCategoryButton extends React.Component {
         && mediorVote === false
         && seniorVote === false
           ) {
-          return this.setState({
+           this.setState({
             currentJuniorCount: juniorCount -1,
             currentMediorCount: mediorCount,
             currentSeniorCount: seniorCount,
@@ -87,7 +87,7 @@ class SubCategoryButton extends React.Component {
           && mediorVote === true
           && seniorVote === false
           ) {
-          return this.setState({
+           this.setState({
             currentJuniorCount: juniorCount + 1,
             currentMediorCount: mediorCount -1,
             currentSeniorCount: seniorCount,
@@ -101,7 +101,7 @@ class SubCategoryButton extends React.Component {
           && mediorVote === false
           && seniorVote === true
           ) {
-          return this.setState({
+           this.setState({
             currentJuniorCount: juniorCount + 1,
             currentMediorCount: mediorCount,
             currentSeniorCount: seniorCount -1,
@@ -136,7 +136,7 @@ class SubCategoryButton extends React.Component {
         && mediorVote === true
         && seniorVote === false
           ) {
-          return this.setState({
+           this.setState({
             currentJuniorCount: juniorCount,
             currentMediorCount: mediorCount -1,
             currentSeniorCount: seniorCount,
@@ -150,7 +150,7 @@ class SubCategoryButton extends React.Component {
           && mediorVote === false
           && seniorVote === false
           ) {
-          return this.setState({
+           this.setState({
             currentJuniorCount: juniorCount -1,
             currentMediorCount: mediorCount + 1,
             currentSeniorCount: seniorCount,
@@ -164,7 +164,7 @@ class SubCategoryButton extends React.Component {
           && mediorVote === false
           && seniorVote === true
           ) {
-          return this.setState({
+           this.setState({
             currentJuniorCount: juniorCount,
             currentMediorCount: mediorCount + 1,
             currentSeniorCount: seniorCount -1,
@@ -186,7 +186,7 @@ class SubCategoryButton extends React.Component {
             && mediorVote === false
             && seniorVote === false
             ) {
-              return this.setState({
+               this.setState({
               currentJuniorCount: juniorCount,
               currentMediorCount: mediorCount,
               currentSeniorCount: seniorCount + 1,
@@ -200,7 +200,7 @@ class SubCategoryButton extends React.Component {
             && mediorVote === false
             && seniorVote === true
               ) {
-              return this.setState({
+               this.setState({
                 currentJuniorCount: juniorCount,
                 currentMediorCount: mediorCount,
                 currentSeniorCount: seniorCount -1,
@@ -214,7 +214,7 @@ class SubCategoryButton extends React.Component {
               && mediorVote === true
               && seniorVote === false
               ) {
-              return this.setState({
+               this.setState({
                 currentJuniorCount: juniorCount,
                 currentMediorCount: mediorCount -1,
                 currentSeniorCount: seniorCount + 1,
@@ -228,7 +228,7 @@ class SubCategoryButton extends React.Component {
               && mediorVote === false
               && seniorVote === false
               ) {
-              return this.setState({
+               this.setState({
                 currentJuniorCount: juniorCount -1,
                 currentMediorCount: mediorCount,
                 currentSeniorCount: seniorCount + 1,

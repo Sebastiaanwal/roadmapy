@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
 import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
 
-
 const eventImageStyle = {
   filter: 'brightness(30%)'
 };
@@ -18,7 +17,7 @@ const eventImageTextStyle = {
   color: 'white'
 };
 
-const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost, isGoing, updatingCategoryLike, cancelupdatingCategoryLike }) => {
+const EventDetailedHeader = ({ openModal, authenticated, juniorVote, mediorVote, seniorVote, loading, event, isHost, isGoing, updatingCategoryLike, cancelupdatingCategoryLike }) => {
   
   return (
     <Segment.Group>
@@ -73,35 +72,13 @@ const EventDetailedHeader = ({ openModal, authenticated, loading, event, isHost,
             Manage Event
           </Button>
         )}
-      {/*   <IncrementButton event={event}  />
-        <DecrementButton event={event}/>
-        <EventCounter event={event}/> */}
-        <SubCategoryButton event={event} sub={'junior'} openModel={openModal} updatingCategoryLike={updatingCategoryLike}
-            loading={loading}
-            isHost={isHost}
-            isGoing={isGoing}
-            updatingCategoryLike={updatingCategoryLike}
-            cancelupdatingCategoryLike={cancelupdatingCategoryLike}
-            authenticated={authenticated}
-        />
-        <SubCategoryButton event={event} sub={'medior'} openModel={openModal} updatingCategoryLike={updatingCategoryLike}
-         loading={loading}
-         isHost={isHost}
-         isGoing={isGoing}
-         updatingCategoryLike={updatingCategoryLike}
-         cancelupdatingCategoryLike={cancelupdatingCategoryLike}
-         authenticated={authenticated}
-        
-        />
-        <SubCategoryButton event={event} sub={'senior'} openModel={openModal} updatingCategoryLike={updatingCategoryLike}
-         loading={loading}
-         isHost={isHost}
-         isGoing={isGoing}
-         updatingCategoryLike={updatingCategoryLike}
-         cancelupdatingCategoryLike={cancelupdatingCategoryLike}
-         authenticated={authenticated}
-
-        />
+        <SubCategoryButton 
+          event={event} 
+          juniorVote={juniorVote} 
+          mediorVote={mediorVote} 
+          seniorVote={seniorVote} 
+          authenticated={authenticated}
+          />
         
       </Segment>
 
