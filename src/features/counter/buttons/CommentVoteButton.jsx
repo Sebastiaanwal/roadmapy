@@ -1,7 +1,6 @@
-import React, { Component } from 'react'
+/* import React, { Component } from 'react'
 import { Button, Icon, Label, Comment} from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import {updateEventComment} from '../../event/eventActions';
 
 
 const actions = {
@@ -36,4 +35,4 @@ export default
     (
         CommentVote
     )
-);
+); */

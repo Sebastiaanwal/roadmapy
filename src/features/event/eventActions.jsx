@@ -53,10 +53,14 @@ export const updateEvent = event => {
         let batch = firestore.batch();
         await batch.update(eventDocRef, event);
 
+
+        //naast attendee moet je hier ook de event data in event_likes, event_answer en toekomstige answer_comment/event_comment updaten.
+        //Kopier de onderstaande code en maak het relevant voor de andere geneste data in event
         let eventAttendeeRef = firestore.collection('event_attendee');
         let eventAttendeeQuery = await eventAttendeeRef.where('eventId', '==', event.id);
         let eventAttendeeQuerySnap = await eventAttendeeQuery.get();
-
+        
+      
         for (let i = 0; i < eventAttendeeQuerySnap.docs.length; i++) {
           let eventAttendeeDocRef = await firestore.collection('event_attendee').doc(eventAttendeeQuerySnap.docs[i].id);
           await batch.update(eventAttendeeDocRef, {
@@ -95,7 +99,7 @@ export const cancelToggle = (cancelled, eventId) => async (dispatch, getState, {
   }
 };
 
-
+//kan er uit??!
 export const addEventComment = (eventId, values, parentId) => 
   async (dispatch, getState, {getFirebase}) => {
     const firebase = getFirebase();
@@ -119,24 +123,7 @@ export const addEventComment = (eventId, values, parentId) =>
     }
   }
 
-  export const updateEventComment = (eventId, commentId, newCount) => 
-  async (dispatch, getState, {getFirebase}) => {
-    console.log(commentId)
-    const firebase = getFirebase();
-    let newComment = {
-      votes: newCount
-    }
-    try {
-      await firebase.update(`event_chat/${eventId}/${commentId}`, newComment)
-    } catch (error) {
-      console.log(error);
-      toastr.error('Oops', 'Problem updating comment')
-    }
-  }
-
-
     export const getCategoryEvents = (category, subCategory, lastEvent) => async (dispatch, getState) => {
-      let today = new Date(Date.now());
       const firestore = firebase.firestore();
       const eventsRef = firestore.collection('events');
       try {
@@ -153,14 +140,14 @@ export const addEventComment = (eventId, values, parentId) =>
         lastEvent
       ? (query = eventsRef
           .where('category', '==', category)
-          .where('subCategory', '==', subCategory || 'evencount' )
+          .where('subCategory', '==', subCategory)
           
           .orderBy('totalCount', 'desc')
           .startAfter(startAfter)
           .limit(2))
       : (query = eventsRef
         .where('category', '==', category)
-        .where('subCategory', '==', subCategory || 'evencount')
+        .where('subCategory', '==', subCategory)
        
         .orderBy('totalCount', 'desc')
         .limit(2))

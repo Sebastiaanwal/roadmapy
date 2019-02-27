@@ -13,6 +13,7 @@ import { objectToArray, createDataTree } from '../../../app/common/util/helpers'
 import { updatingCategoryLike, cancelGoingToEvent } from '../../user/userActions';
 import { addEventComment } from '../eventActions';
 import { openModal } from '../../modals/modalActions'
+import EventCommentPage from '../EventComment/Assets/EventCommentPage';
 
 const mapState = (state, ownProps) => {
   let event = {};
@@ -21,8 +22,13 @@ const mapState = (state, ownProps) => {
   let seniorVote = {};
   let findLikeId = {};
 
+  //waarschijnlijk bug/anti patern en daardoor traag bij laden page. 
+  //evenCommentPage en eventCommentForm brengen ook firestoreconnet in
+  //het effect was dat eventdetailpage state ook herlade en een hele nieuwe array kreeg met eventid's
+  //hierdoor pakte de pagina de verkeerde id bij de filter. CHECK wat antipatern is!
   if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
-    event = state.firestore.ordered.events[0];
+    const eventInArray = state.firestore.ordered.events.filter(e => e.id === ownProps.match.params.id);
+    event = eventInArray[0]
   }
 
   if (event.likes) {
@@ -119,13 +125,11 @@ class EventDetailedPage extends Component {
             seniorVote={seniorVote} 
           />
           <EventDetailedInfo event={event} />
-          {authenticated &&
-          <EventDetailedChat 
           
-          eventChat={chatTree}
-          addEventComment={addEventComment} 
-          eventId={event.id} 
-          uid={auth.uid}
+          {authenticated &&
+          <EventCommentPage 
+            eventId={match.params.id}
+         
           />}
         </Grid.Column>
         <Grid.Column width={6}>

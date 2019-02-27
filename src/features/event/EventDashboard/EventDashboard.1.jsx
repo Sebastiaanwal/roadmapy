@@ -7,6 +7,10 @@ import EventList from '../EventList/EventList';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import EventActivity from '../EventActivity/EventActivity';
 
+
+//niet meer gebruikt toch?
+
+
 const mapState = (state, ownProps) => {
   
 const category = ownProps.match.params.id;
