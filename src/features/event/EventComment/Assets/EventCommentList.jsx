@@ -5,7 +5,7 @@ import { Card, Grid, Header, Image, Segment, Tab, Label, Item, Icon, Button } fr
 
 
 
-class EventList extends Component {
+class EventCommentList extends Component {
   render() {
     const { answers, getNextAnswers, loading, moreAnswers, match, auth } = this.props;
     return (
@@ -18,7 +18,7 @@ class EventList extends Component {
               hasMore={!loading && moreAnswers}
               initialLoad={false}
             >
-              {answers && answers.map(answer => <EventCommentItem match={match} key={answer.id} answer={answer} auth={auth}/>)}
+              {answers && answers.map(answer => <EventCommentItem match={match} key={answer.id} answer={answer} />)}
             </InfiniteScroll>
           )}
       </div>
@@ -26,4 +26,4 @@ class EventList extends Component {
   }
 }
 
-export default EventList;
+export default EventCommentList;

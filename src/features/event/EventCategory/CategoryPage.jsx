@@ -34,7 +34,6 @@ class CategoryPage extends Component {
     moreEvents: false,
     loadingInitial: true,
     loadedEvents: [],
-    contextRef: {}, 
     
   };
 
@@ -43,7 +42,6 @@ class CategoryPage extends Component {
     await firestore.get(`events/`);
   
     await firestore.setListener(`events/`);
-
     let next = await this.props.getCategoryEvents(category, subCategory);
     if (next && next.docs) {
       this.setState({
@@ -71,8 +69,7 @@ class CategoryPage extends Component {
       });
     }
   };
-
-  handleContextRef = contextRef => this.setState({contextRef})
+  //ik (Bram) snap het gebruik van ref niet wrapped over Eventlist.
 
   render() {
     const { loading, activities, match, auth } = this.props;
@@ -83,7 +80,6 @@ class CategoryPage extends Component {
       <Grid>
         <Grid.Column width={10}>
           <CategoryMenu category={match.params.id} />
-          <div ref={this.handleContextRef}>
           <EventList
             loading={loading}
             moreEvents={moreEvents}
@@ -92,11 +88,10 @@ class CategoryPage extends Component {
             changeTab={this.changeTab}
             auth={auth}
           />
-          </div>
+        
 
         </Grid.Column>
         <Grid.Column width={6}>
-          <EventActivity activities={activities} contextRef={this.state.contextRef} />
         </Grid.Column>
         <Grid.Column width={10}>
           <Loader active={loading}/>

@@ -6,25 +6,23 @@ import { firestoreConnect, firebaseConnect } from 'react-redux-firebase';
 import { getAnswers } from '../answerActions';
 import EventCommentList from './EventCommentList';
 import LoadingComponent from '../../../../app/layout/LoadingComponent';
-import AnswerForm from './EventCommentPage';
 
 
 const mapState = (state, ownProps) => {
-  //hoe voeg komen de comments in storemanager net zoals bij event? 
-  //Bij createevent, objectassign ook gebruiken voor de 'answers'?
-
-  return {
-    answers: state.answers,
-    loading: state.async.loading,
-    auth: state.firebase.auth,
+  
+  
+    return {
+      answers: state.answers,
+      loading: state.async.loading,
+    }
   }
-}
 
 const actions = {
-    getAnswers
+  getAnswers
 };
 
 class EventCommentPage extends Component {
+  
   state = {
     moreAnswers: false,
     loadingInitial: true,
@@ -33,12 +31,12 @@ class EventCommentPage extends Component {
     
   };
 
+
   async componentDidMount() {
     const { firestore, eventId } = this.props;
     await firestore.get(`event_answer/`);
   
     await firestore.setListener(`event_answer/`);
-    console.log(eventId)
     let next = await this.props.getAnswers(eventId);
     if (next && next.docs) {
       this.setState({
@@ -48,18 +46,18 @@ class EventCommentPage extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    console.log(this.props.answers)
-    console.log(prevProps.answers)
-    if (this.props.answers.id !== prevProps.answers.id) {
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.answers !== nextProps.answers) {
       this.setState({
-        loadedAnswers: [...this.state.loadedAnswers, ...this.props.answers]
+        loadedAnswers: [...this.state.loadedAnswers, ...nextProps.answers]
       });
     }
   }
 
   getNextAnswers = async () => {
     const { answers, eventId } = this.props;
+    console.log(answers)
     let lastEvent = answers && answers[answers.length - 1];
     let next = await this.props.getAnswers(eventId, lastEvent);
     if (next && next.docs && next.docs.length <= 1) {
@@ -72,14 +70,13 @@ class EventCommentPage extends Component {
   handleContextRef = contextRef => this.setState({contextRef})
 
   render() {
-    const { loading, auth, eventId, event } = this.props;
+    const { loading, auth, eventId } = this.props;
     const { moreAnswers, loadedAnswers } = this.state;
     if (this.state.loadingInitial) return <LoadingComponent inverted={true} />;
     console.log(this.state.loadedAnswers)
     return (
       <Grid>
         <Grid.Column width={16}>
-          {/* <CategoryMenu category={match.params.id} /> */}
           <div ref={this.handleContextRef}>
           <EventCommentList
             loading={loading}
@@ -87,10 +84,6 @@ class EventCommentPage extends Component {
             answers={loadedAnswers}
             getNextAnswers={this.getNextAnswers}
             changeTab={this.changeTab}
-            auth={auth}
-          />
-          <AnswerForm 
-          eventId={eventId}          
           />
           </div>
 

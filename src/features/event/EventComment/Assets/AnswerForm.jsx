@@ -18,14 +18,14 @@ import {
 //logica (validate, knoppen, updates moeten in formulier nog worden toegevoegd 
 
 const mapState = (state, ownProps) => {
+  let event = {}
 
-
-  /* if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
+  if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
     event = state.firestore.ordered.events[0];
-  } */
+  }
 
   return {
-/*     initialValues: event */
+    event,
     loading: state.async.loading
   };
 };

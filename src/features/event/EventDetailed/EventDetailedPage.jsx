@@ -10,10 +10,14 @@ import EventDetailedChat from './EventDetailedChat';
 import EventDetailedSidebar from './EventDetailedSidebar';
 import LoadingComponent from '../../../app/layout/LoadingComponent'
 import { objectToArray, createDataTree } from '../../../app/common/util/helpers';
+import {getAnswers} from '../EventComment/answerActions'
 import { updatingCategoryLike, cancelGoingToEvent } from '../../user/userActions';
 import { addEventComment } from '../eventActions';
 import { openModal } from '../../modals/modalActions'
 import EventCommentPage from '../EventComment/Assets/EventCommentPage';
+import CategoryPage from '../EventCategory/CategoryPage';
+import AnswerForm from '../EventComment/Assets/AnswerForm';
+
 
 const mapState = (state, ownProps) => {
   let event = {};
@@ -52,6 +56,7 @@ const mapState = (state, ownProps) => {
       }
 
   return {
+    answers: state.answers,
     requesting: state.firestore.status.requesting,
     event,
     loading: state.async.loading,
@@ -70,7 +75,7 @@ const actions = {
   updatingCategoryLike,
   cancelGoingToEvent,
   addEventComment,
-  openModal
+  openModal 
 };
 
 class EventDetailedPage extends Component {
@@ -81,11 +86,14 @@ class EventDetailedPage extends Component {
   async componentDidMount() {
     const { firestore, match } = this.props;
     let event = await firestore.get(`events/${match.params.id}`);
+  
     if (!event.exists) {
       toastr.error('Not found', 'This is not the event you are looking for')
       this.props.history.push('/error')
     }
     await firestore.setListener(`events/${match.params.id}`);
+
+
     this.setState({
       initialLoading: false
     })
@@ -96,8 +104,11 @@ class EventDetailedPage extends Component {
     await firestore.unsetListener(`events/${match.params.id}`);
   }
 
+
+
   render() {
-    const { match, requesting, openModal, loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
+    
+    const { match, requesting, openModal, answers, getAnswers,  loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
     const attendees = event && event.attendees && objectToArray(event.attendees).sort(function(a,b) {
       return a.joinDate - b.joinDate
     })
@@ -126,11 +137,15 @@ class EventDetailedPage extends Component {
           />
           <EventDetailedInfo event={event} />
           
-          {authenticated &&
+         
           <EventCommentPage 
             eventId={match.params.id}
-         
-          />}
+          />
+          <AnswerForm 
+          eventId={match.params.id}          
+          />
+
+          
         </Grid.Column>
         <Grid.Column width={6}>
           <EventDetailedSidebar attendees={attendees} />

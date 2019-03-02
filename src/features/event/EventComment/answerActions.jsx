@@ -16,7 +16,6 @@ import firebase from '../../../app/config/firebase';
             .doc(lastEvent.id)
             .get());
         let query;
-    
         lastEvent
           ? (query = eventsRef
               .where('eventId', '==', pageId)
