@@ -2,18 +2,19 @@ import React, { Component } from 'react';
 import { Grid, Loader } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { firestoreConnect, firebaseConnect } from 'react-redux-firebase';
+import { withFirestore, firebaseConnect } from 'react-redux-firebase';
 import { getAnswers } from '../answerActions';
-import EventCommentList from './EventCommentList';
+import { objectToArray } from '../../../../app/common/util/helpers';
+import EventAnswerList from './EventAnswerList';
 import LoadingComponent from '../../../../app/layout/LoadingComponent';
 
 
 const mapState = (state, ownProps) => {
   
-  
     return {
+     
       answers: state.answers,
-      loading: state.async.loading,
+      loading: state.async.loading
     }
   }
 
@@ -21,7 +22,7 @@ const actions = {
   getAnswers
 };
 
-class EventCommentPage extends Component {
+class EventAnswerSection extends Component {
   
   state = {
     moreAnswers: false,
@@ -70,7 +71,7 @@ class EventCommentPage extends Component {
   handleContextRef = contextRef => this.setState({contextRef})
 
   render() {
-    const { loading, auth, eventId } = this.props;
+    const { loading, vote, eventId } = this.props;
     const { moreAnswers, loadedAnswers } = this.state;
     if (this.state.loadingInitial) return <LoadingComponent inverted={true} />;
     console.log(this.state.loadedAnswers)
@@ -78,10 +79,11 @@ class EventCommentPage extends Component {
       <Grid>
         <Grid.Column width={16}>
           <div ref={this.handleContextRef}>
-          <EventCommentList
+          <EventAnswerList
+            eventId={eventId}
             loading={loading}
             moreAnswers={moreAnswers}
-            answers={loadedAnswers}
+            loadedAnswers={loadedAnswers}
             getNextAnswers={this.getNextAnswers}
             changeTab={this.changeTab}
           />
@@ -97,6 +99,9 @@ class EventCommentPage extends Component {
   }
 }
 
-export default compose(connect(mapState, actions)(firestoreConnect()(EventCommentPage)));
+export default compose(
+  withFirestore,
+  connect(mapState, actions),
+  firebaseConnect())(EventAnswerSection);
 
 

@@ -98,42 +98,59 @@ import firebase from '../../../app/config/firebase';
     }
 
 
-    export const updateAnswer= (answer, event) => async (dispatch, getState) => {
+    export const updateAnserVote = (answer) => { 
+
+      return async (dispatch, getState) => {
       dispatch(asyncActionStart())
       const firestore = firebase.firestore();
       const user = firebase.auth().currentUser;
-      const profile = getState().firebase.profile;
-      const userProfile = {
-        displayName: profile.displayName,
-        id: user.uid, 
-        };
       try {
-        let eventDocRef = firestore.collection('events').doc(event.id);
-        let eventAttendeeDocRef = firestore.collection('event_answer').doc(`${event.id}_${user.uid}`);
+        let eventAttendeeDocRef = firestore.collection('event_answer').doc(answer.id);
     
-        await firestore.runTransaction(async (transaction) => {
-          await transaction.get(eventDocRef);
-          await transaction.update(eventDocRef, {
-            [`Answer.${user.uid}`]: userProfile
-          })
-          await transaction.set(eventAttendeeDocRef, {
-            eventId: event.id,
-            userUid: user.uid,
-            eventDate: event.date,
-            host: false,
-            editedDate: Date.now(),
-            photoURL: profile.photoURL || '/assets/user.png',
-            displayName: profile.displayName,
-            host: false,
-            id: user.uid, 
-            text: answer.text    
-          })
-        })
+        await eventAttendeeDocRef.update({votes: answer.votes})
         dispatch(asyncActionFinish())
-        toastr.success('Success', 'You added your answer');
+        toastr.success('Success', 'You added your  vote');
       } catch (error) {
         console.log(error);
         dispatch(asyncActionError())
-        toastr.error('Oops', 'Problem adding your answer');
+        toastr.error('Oops', 'Problem adding your answer vote');
       }
     }
+  }
+
+
+  export const updateVoter = (answer) => async (dispatch, getState) => {
+    dispatch(asyncActionStart())
+    const firestore = firebase.firestore();
+    const user = firebase.auth().currentUser;
+    const id = answer.eventId+"_"+user.uid
+    const userProfile = {
+      id: id,
+      joinDate: Date.now(),
+      uid: user.uid, 
+      voteUser: answer.voteUser
+      };
+    try {
+      let eventDocRef = firestore.collection('event_answer').doc(answer.id);
+      let eventAttendeeDocRef = firestore.collection('answer_votes').doc(`${answer.eventId}_${user.uid}`);
+  
+      await firestore.runTransaction(async (transaction) => {
+        await transaction.get(eventDocRef);
+        await transaction.update(eventDocRef, {
+          [`voters.${user.uid}`]: userProfile
+        })
+        await transaction.set(eventAttendeeDocRef, {
+          eventId: answer.eventId,
+          userUid: user.uid,
+          eventDate: Date.now(),
+          voteUser: answer.voteUser
+        })
+      })
+      dispatch(asyncActionFinish())
+      toastr.success('Success', 'Your vote has been registerd');
+    } catch (error) {
+      console.log(error);
+      dispatch(asyncActionError())
+      toastr.error('Oops', 'Problem registering your vote');
+    }
+  }

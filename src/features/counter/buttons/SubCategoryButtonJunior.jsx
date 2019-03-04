@@ -10,7 +10,7 @@ const actions = {
   updatingCategoryLike
 };
 
-class SubCategoryButtonJunior extends React.Component {
+class SubCategoryButtonJunior extends Component {
  
  
 

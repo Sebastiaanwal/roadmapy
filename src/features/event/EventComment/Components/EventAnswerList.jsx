@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
-import EventCommentItem from './EventCommentItem';
+import EventAnswerItem from './EventAnswerItem';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Card, Grid, Header, Image, Segment, Tab, Label, Item, Icon, Button } from 'semantic-ui-react';
 
 
 
-class EventCommentList extends Component {
+class EventAnswerList extends Component {
   render() {
-    const { answers, getNextAnswers, loading, moreAnswers, match, auth } = this.props;
+    const { loadedAnswers, getNextAnswers, loading, moreAnswers, match, } = this.props;
     return (
       <div>
-        {answers &&
-          answers.length !== 0 && (
+        {loadedAnswers &&
+          loadedAnswers.length !== 0 && (
             <InfiniteScroll
               pageStart={1}
               loadMore={getNextAnswers}
               hasMore={!loading && moreAnswers}
               initialLoad={false}
             >
-              {answers && answers.map(answer => <EventCommentItem match={match} key={answer.id} answer={answer} />)}
+              {loadedAnswers && loadedAnswers.map(answer => <EventAnswerItem match={match} key={answer.id} answer={answer} />)}
             </InfiniteScroll>
           )}
       </div>
@@ -26,4 +26,4 @@ class EventCommentList extends Component {
   }
 }
 
-export default EventCommentList;
+export default EventAnswerList;

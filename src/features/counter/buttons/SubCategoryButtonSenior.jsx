@@ -9,7 +9,7 @@ const actions = {
   updatingCategoryLike
 };
 
-class SubCategoryButtonSenior extends React.Component {
+class SubCategoryButtonSenior extends Component {
 
   componentDidUpdate(prevProps) {
     const {updateEvent, updatingCategoryLike, newEvent, clickedCategory } = this.props

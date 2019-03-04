@@ -266,7 +266,7 @@ class SubCategoryButton extends React.Component {
 
     const subCategory = this.chooseSubCategory(currentJuniorCount, currentMediorCount, currentSeniorCount)
 
-
+    console.log(mediorCount)
     const totalCount = juniorCount + mediorCount + seniorCount
     const newProps = {
       ...this.props.event, 

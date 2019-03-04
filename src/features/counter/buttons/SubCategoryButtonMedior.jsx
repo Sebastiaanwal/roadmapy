@@ -9,7 +9,7 @@ const actions = {
   updatingCategoryLike
 };
 
-class SubCategoryButtonMedior extends React.Component {
+class SubCategoryButtonMedior extends Component {
 
 
   componentDidUpdate(prevProps) {

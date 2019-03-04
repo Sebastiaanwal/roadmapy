@@ -14,7 +14,7 @@ import {getAnswers} from '../EventComment/answerActions'
 import { updatingCategoryLike, cancelGoingToEvent } from '../../user/userActions';
 import { addEventComment } from '../eventActions';
 import { openModal } from '../../modals/modalActions'
-import EventCommentPage from '../EventComment/Assets/EventCommentPage';
+import EventAnswerSection from '../EventComment/Components/EventAnswerSection';
 import CategoryPage from '../EventCategory/CategoryPage';
 import AnswerForm from '../EventComment/Assets/AnswerForm';
 
@@ -138,7 +138,7 @@ class EventDetailedPage extends Component {
           <EventDetailedInfo event={event} />
           
          
-          <EventCommentPage 
+          <EventAnswerSection 
             eventId={match.params.id}
           />
           <AnswerForm 

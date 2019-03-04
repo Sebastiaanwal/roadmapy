@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { debounce } from "debounce";
 import { objectToArray } from '../../../app/common/util/helpers';
 import distanceInWords from 'date-fns/distance_in_words';
-import CommentVoteButton from '../../counter/buttons/CommentVoteButton';
+import CommentVoteButton from '../../counter/buttons/AnswerVoteButton';
      //onclickhandlet update localstate
                     //localstate doorgegeven aan childvotecomponent. 
                     //zodra childvotecomponent is geupdate dan automatisch action: update ID in firebase
@@ -124,7 +124,7 @@ class EventDetailedChat extends Component {
                       <Comment.Action onClick={this.handleOpenReplyForm(comment.id)}>Reply</Comment.Action>
 
 
-                          <CommentVoteButton 
+                        {/*   <CommentVoteButton 
                             key={1 + selecteVotedId}
                             text={"Vote up"}
                             icon={<i className="caret up icon"></i>}
@@ -142,7 +142,7 @@ class EventDetailedChat extends Component {
                             eventId={eventId}
                             commentId={selecteVotedId}
                           />
-                      
+                       */}
 
                       {showReplyForm &&
                         selectedCommentId === comment.id && (

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { withFirestore } from 'react-redux-firebase';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
-import {cancelToggle, setAnswer, updateAnswer } from '../answerActions';
+import {cancelToggle, setAnswer } from '../answerActions';
 import TextInput from '../../../../app/common/form/TextInput';
 import TextArea from '../../../../app/common/form/TextArea';
 import SelectInput from '../../../../app/common/form/SelectInput';
@@ -16,6 +16,7 @@ import {
 } from 'revalidate';
 
 //logica (validate, knoppen, updates moeten in formulier nog worden toegevoegd 
+//updateanswer action maken etc. 
 
 const mapState = (state, ownProps) => {
   let event = {}
@@ -31,8 +32,7 @@ const mapState = (state, ownProps) => {
 };
 
 const actions = {
-  setAnswer, 
-  updateAnswer
+  setAnswer
 };
 
 const validate = combineValidators({
