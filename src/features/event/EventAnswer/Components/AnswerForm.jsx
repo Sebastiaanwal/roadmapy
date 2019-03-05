@@ -19,15 +19,18 @@ import {
 //updateanswer action maken etc. 
 
 const mapState = (state, ownProps) => {
-  let event = {}
+  let answer = {}
 
-  if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
-    event = state.firestore.ordered.events[0];
+  if (state.firestore.ordered.event_answer && state.firestore.ordered.event_answer[0] && ownProps.eventId != ownProps.match.params.id) {
+    answer = state.firestore.ordered.event_answer[0];
+  } else {
+    answer = {}
   }
 
   return {
-    event,
+    initialValues: answer,
     loading: state.async.loading
+    
   };
 };
 
@@ -55,12 +58,12 @@ class AnswerForm extends Component {
       this.props.updateAnswer(values, this.props.event);
     } else { */
       //hoe zorg ik ervoor dat gelijk het geneste like object erin komt? net zoals nu gebeurd bij event_attendees??
-      await this.props.setAnswer(values, this.props.event);
+      await this.props.setAnswer(values, this.props.eventId);
     //}
   };
 
   render() {
-    const { invalid, submitting, pristine, event, cancelToggle, loading } = this.props;
+    const { invalid, submitting, pristine, cancelToggle, loading } = this.props;
     return (
       <Grid>
         <Grid.Column width={16}>

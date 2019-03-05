@@ -10,26 +10,34 @@ import EventDetailedChat from './EventDetailedChat';
 import EventDetailedSidebar from './EventDetailedSidebar';
 import LoadingComponent from '../../../app/layout/LoadingComponent'
 import { objectToArray, createDataTree } from '../../../app/common/util/helpers';
-import {getAnswers} from '../EventComment/answerActions'
+import {getAnswers} from '../EventComment/commentActions'
 import { updatingCategoryLike, cancelGoingToEvent } from '../../user/userActions';
 import { addEventComment } from '../eventActions';
 import { openModal } from '../../modals/modalActions'
-import EventAnswerSection from '../EventComment/Components/EventAnswerSection';
-import CategoryPage from '../EventCategory/CategoryPage';
-import AnswerForm from '../EventComment/Assets/AnswerForm';
+import EventAnswerSection from '../EventAnswer/Components/EventAnswerSection';
+import AnswerForm from '../EventAnswer/Components/AnswerForm';
+import EventCommentSection from '../EventComment/Components/EventCommentSection';
+import CommentForm from '../EventComment/Components/CommentForm';
 
 
 const mapState = (state, ownProps) => {
+
+  let userDidAnswer = true
   let event = {};
   let juniorVote = {};
   let mediorVote = {};
   let seniorVote = {};
   let findLikeId = {};
+  let findAnswerId = {};
+
 
   //waarschijnlijk bug/anti patern en daardoor traag bij laden page. 
   //evenCommentPage en eventCommentForm brengen ook firestoreconnet in
   //het effect was dat eventdetailpage state ook herlade en een hele nieuwe array kreeg met eventid's
   //hierdoor pakte de pagina de verkeerde id bij de filter. CHECK wat antipatern is!
+  
+
+  
   if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
     const eventInArray = state.firestore.ordered.events.filter(e => e.id === ownProps.match.params.id);
     event = eventInArray[0]
@@ -55,7 +63,22 @@ const mapState = (state, ownProps) => {
         seniorVote = false
       }
 
+      if (event.answers) {
+        findAnswerId = objectToArray(event.answers).filter(e => e.id === state.firebase.auth.uid)
+        } else {
+          userDidAnswer = true
+        }
+      
+        findAnswerId = findAnswerId[0]
+      
+        if (findAnswerId) {
+          userDidAnswer = false
+          } else {
+            userDidAnswer = true
+          }
+
   return {
+    userDidAnswer,
     answers: state.answers,
     requesting: state.firestore.status.requesting,
     event,
@@ -86,7 +109,6 @@ class EventDetailedPage extends Component {
   async componentDidMount() {
     const { firestore, match } = this.props;
     let event = await firestore.get(`events/${match.params.id}`);
-  
     if (!event.exists) {
       toastr.error('Not found', 'This is not the event you are looking for')
       this.props.history.push('/error')
@@ -108,7 +130,7 @@ class EventDetailedPage extends Component {
 
   render() {
     
-    const { match, requesting, openModal, answers, getAnswers,  loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
+    const { match, requesting, openModal, userDidAnswer, answers, getAnswers,  loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
     const attendees = event && event.attendees && objectToArray(event.attendees).sort(function(a,b) {
       return a.joinDate - b.joinDate
     })
@@ -135,15 +157,27 @@ class EventDetailedPage extends Component {
             mediorVote={mediorVote} 
             seniorVote={seniorVote} 
           />
+           <EventCommentSection 
+            eventId={match.params.id}
+          />
+          {userDidAnswer &&
+          <CommentForm 
+          match={match}
+          eventId={match.params.id}          
+          />
+          }
           <EventDetailedInfo event={event} />
           
          
           <EventAnswerSection 
             eventId={match.params.id}
           />
+          {userDidAnswer &&
           <AnswerForm 
+          match={match}
           eventId={match.params.id}          
           />
+          }
 
           
         </Grid.Column>

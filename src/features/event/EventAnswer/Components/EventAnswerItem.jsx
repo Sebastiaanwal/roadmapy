@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Segment, Item, Icon, List, Grid, Column, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom'
 import { compose } from 'redux';
-import { firestoreConnect} from 'react-redux-firebase';
+import { firebaseConnect, withFirestore} from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import EventAnswerCounter from './EventAnswerCounter'
 import AnswerVoteButton from '../../../counter/buttons/AnswerVoteButton'
@@ -20,10 +20,7 @@ const mapState = (state, ownProps) => {
     const answerInArray = state.firestore.ordered.event_answer.filter(e => e.id === ownProps.answer.id);
     answerState = answerInArray[0]
   }
-
-  //zorg dat geneste user onder "voters" valt
-  //zorg date id, de uid word
-  //en zorg dat onder het veld vote de 0 of 1 komt. 
+ 
  if (answerState.voters) {
     findVoteId = objectToArray(answerState.voters).filter(e => e.uid === state.firebase.auth.uid)
     } else {
@@ -40,15 +37,10 @@ const mapState = (state, ownProps) => {
 
     return {
       answerState, 
-      currentVoteUser
+      currentVoteUser, 
+      uid: state.firebase.auth.uid
   }
 }
-//knoppen ui
-//currentvote functie
-//parent-child relatie clickhandler + logica voting
-//action functie, updaten event_answer en nested object registratie boolean + uid
-//debounce knoppen
-
 
 
 class EventAnswerItem extends Component {
@@ -110,7 +102,7 @@ class EventAnswerItem extends Component {
 
 
   render() {
-    const {answer, answerState, eventId} = this.props
+    const {answer, answerState, eventId, uid} = this.props
     const {votes, voteUser} = this.state
 
     const newAnswer = {
@@ -159,7 +151,15 @@ class EventAnswerItem extends Component {
               onClick={this.handleClick}
               content={"downvote"}
             />
-
+             {uid === answerState.uid && 
+          <Button
+            as={Link}
+            to={`/answer/${answerState.id}`}
+            color="orange"
+          >
+            Edit
+          </Button>
+        }
           <Button as={Link} to={`/event/${answer.id}`} color="teal" floated="right" content="View" />
         </Segment>
       </Segment.Group>
@@ -172,6 +172,7 @@ class EventAnswerItem extends Component {
 }
 
 export default compose(
+  withFirestore,
   connect(mapState, null),
-  firestoreConnect()
+  firebaseConnect()
 )(EventAnswerItem);

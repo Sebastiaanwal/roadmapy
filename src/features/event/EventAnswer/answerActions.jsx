@@ -54,7 +54,7 @@ import firebase from '../../../app/config/firebase';
     //Answers zijn namelijk uniek, en comments kunnen mensen vaker geven. Er moet dus gecheckt worden of de comment eerder is gegeven.
     //vervolgens moet er een getal worden toegevoegd aan de combinatie event.id_user.id+2 om het uniek te houden. 
 
-    export const setAnswer = (answer, event) => async (dispatch, getState) => {
+    export const setAnswer = (answer, eventId) => async (dispatch, getState) => {
       dispatch(asyncActionStart())
       const firestore = firebase.firestore();
       const user = firebase.auth().currentUser;
@@ -64,18 +64,17 @@ import firebase from '../../../app/config/firebase';
         id: user.uid, 
         };
       try {
-        let eventDocRef = firestore.collection('events').doc(event.id);
-        let eventAttendeeDocRef = firestore.collection('event_answer').doc(`${event.id}_${user.uid}`);
-        const id = event.id + "_" + user.uid
+        let eventDocRef = firestore.collection('events').doc(eventId);
+        let eventAttendeeDocRef = firestore.collection('event_answer').doc(`${eventId}_${user.uid}`);
+        const id = eventId+"_" +user.uid
         await firestore.runTransaction(async (transaction) => {
           await transaction.get(eventDocRef);
           await transaction.update(eventDocRef, {
-            [`Answer.${user.uid}`]: userProfile
+            [`answers.${user.uid}`]: userProfile
           })
           await transaction.set(eventAttendeeDocRef, {
-            eventId: event.id,
-            userUid: user.uid,
-            eventDate: event.date,
+            eventId: eventId,
+            uid: user.uid,
             host: false,
             votes: 0,
             date: Date.now(),
@@ -141,7 +140,7 @@ import firebase from '../../../app/config/firebase';
         })
         await transaction.set(eventAttendeeDocRef, {
           eventId: answer.eventId,
-          userUid: user.uid,
+          uid: user.uid,
           eventDate: Date.now(),
           voteUser: answer.voteUser
         })

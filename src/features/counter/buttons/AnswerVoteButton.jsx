@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import {updateAnserVote, updateVoter} from '../../event/EventComment/answerActions';
+import {updateAnserVote, updateVoter} from '../../event/EventAnswer/answerActions';
 
 
 const actions = {

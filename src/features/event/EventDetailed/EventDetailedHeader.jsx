@@ -69,7 +69,7 @@ const EventDetailedHeader = ({ openModal, authenticated, juniorVote, mediorVote,
             to={`/manage/${event.id}`}
             color="orange"
           >
-            Manage Event
+            Edit
           </Button>
         )}
         <SubCategoryButton 
