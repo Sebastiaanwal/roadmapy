@@ -75,12 +75,10 @@ import firebase from '../../../app/config/firebase';
           await transaction.set(eventAttendeeDocRef, {
             eventId: eventId,
             uid: user.uid,
-            host: false,
             votes: 0,
             date: Date.now(),
             photoURL: profile.photoURL || '/assets/user.png',
             displayName: profile.displayName,
-            host: false,
             id: id, 
             description: answer.description,
             title_link: answer.title_link,

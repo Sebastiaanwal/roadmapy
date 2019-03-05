@@ -7,18 +7,18 @@ import { Card, Grid, Header, Image, Segment, Tab, Label, Item, Icon, Button } fr
 
 class EventCommentList extends Component {
   render() {
-    const { loadedAnswers, getNextAnswers, loading, moreAnswers, match, } = this.props;
+    const { loadedComments, getNextComments, loading, moreComments, match, } = this.props;
     return (
       <div>
-        {loadedAnswers &&
-          loadedAnswers.length !== 0 && (
+        {loadedComments &&
+          loadedComments.length !== 0 && (
             <InfiniteScroll
               pageStart={1}
-              loadMore={getNextAnswers}
-              hasMore={!loading && moreAnswers}
+              loadMore={getNextComments}
+              hasMore={!loading && moreComments}
               initialLoad={false}
             >
-              {loadedAnswers && loadedAnswers.map(answer => <EventCommentItem match={match} key={answer.id} answer={answer} />)}
+              {loadedComments && loadedComments.map(comment => <EventCommentItem match={match} key={comment.id} comment={comment} />)}
             </InfiniteScroll>
           )}
       </div>

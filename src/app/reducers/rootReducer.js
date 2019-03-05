@@ -9,6 +9,8 @@ import modalsReducer from '../../features/modals/modalReducer';
 import authReducer from '../../features/auth/authReducer';
 import asyncReducer from '../../features/async/asyncReducer';
 import answerReducer from '../../features/event/EventAnswer/answerReducer'
+import commentReducer from '../../features/event/EventComment/commentReducer'
+
 
 const rootReducer = combineReducers({
   firebase: firebaseReducer,
@@ -20,7 +22,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   async: asyncReducer,
   toastr: toastrReducer,
-  answers: answerReducer
+  answers: answerReducer,
+  comments: commentReducer
 })
 
 export default rootReducer

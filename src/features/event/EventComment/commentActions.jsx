@@ -1,18 +1,18 @@
 import { toastr } from 'react-redux-toastr';
-import { FETCH_ANSWERS } from './commentConstants';
+import { FETCH_COMMENTS } from './commentConstants';
 import { asyncActionStart, asyncActionFinish, asyncActionError } from '../../async/asyncActions';
 import firebase from '../../../app/config/firebase';
 
-    export const getAnswers = (pageId, lastEvent) => async (dispatch, getState) => {
+    export const getComments = (pageId, lastEvent) => async (dispatch, getState) => {
       const firestore = firebase.firestore();
-      const eventsRef = firestore.collection('event_answer');
+      const eventsRef = firestore.collection('event_comment');
       console.log(pageId)
       try {
         dispatch(asyncActionStart());
         let startAfter =
           lastEvent &&
           (await firestore
-            .collection('event_answer')
+            .collection('event_comment')
             .doc(lastEvent.id)
             .get());
         let query;
@@ -34,13 +34,13 @@ import firebase from '../../../app/config/firebase';
           return querySnap;
         }
     
-        let answers = [];
+        let comments = [];
     
         for (let i = 0; i < querySnap.docs.length; i++) {
           let evt = { ...querySnap.docs[i].data(), id: querySnap.docs[i].id };
-          answers.push(evt);
+          comments.push(evt);
         }
-        dispatch({ type: FETCH_ANSWERS, payload: { answers } });
+        dispatch({ type: FETCH_COMMENTS, payload: { comments } });
         dispatch(asyncActionFinish());
         return querySnap;
       } catch (error) {
@@ -54,7 +54,7 @@ import firebase from '../../../app/config/firebase';
     //Answers zijn namelijk uniek, en comments kunnen mensen vaker geven. Er moet dus gecheckt worden of de comment eerder is gegeven.
     //vervolgens moet er een getal worden toegevoegd aan de combinatie event.id_user.id+2 om het uniek te houden. 
 
-    export const setAnswer = (answer, eventId) => async (dispatch, getState) => {
+    export const setComment = (comment, eventId) => async (dispatch, getState) => {
       dispatch(asyncActionStart())
       const firestore = firebase.firestore();
       const user = firebase.auth().currentUser;
@@ -65,57 +65,31 @@ import firebase from '../../../app/config/firebase';
         };
       try {
         let eventDocRef = firestore.collection('events').doc(eventId);
-        let eventAttendeeDocRef = firestore.collection('event_answer').doc(`${eventId}_${user.uid}`);
+        let eventAttendeeDocRef = firestore.collection('event_comment').doc(`${eventId}_${user.uid}`);
         const id = eventId+"_" +user.uid
         await firestore.runTransaction(async (transaction) => {
           await transaction.get(eventDocRef);
           await transaction.update(eventDocRef, {
-            [`answers.${user.uid}`]: userProfile
+            [`comments.${user.uid}`]: userProfile
           })
           await transaction.set(eventAttendeeDocRef, {
             eventId: eventId,
             uid: user.uid,
-            host: false,
-            votes: 0,
             date: Date.now(),
             photoURL: profile.photoURL || '/assets/user.png',
             displayName: profile.displayName,
-            host: false,
             id: id, 
-            description: answer.description,
-            title_link: answer.title_link,
-            url: answer.url
+            description: comment.description,
           })
         })
         dispatch(asyncActionFinish())
-        toastr.success('Success', 'You added your answer');
+        toastr.success('Success', 'You added your comment');
       } catch (error) {
         console.log(error);
         dispatch(asyncActionError())
-        toastr.error('Oops', 'Problem adding your answer');
+        toastr.error('Oops', 'Problem adding your comment');
       }
     }
-
-
-    export const updateAnserVote = (answer) => { 
-
-      return async (dispatch, getState) => {
-      dispatch(asyncActionStart())
-      const firestore = firebase.firestore();
-      const user = firebase.auth().currentUser;
-      try {
-        let eventAttendeeDocRef = firestore.collection('event_answer').doc(answer.id);
-    
-        await eventAttendeeDocRef.update({votes: answer.votes})
-        dispatch(asyncActionFinish())
-        toastr.success('Success', 'You added your  vote');
-      } catch (error) {
-        console.log(error);
-        dispatch(asyncActionError())
-        toastr.error('Oops', 'Problem adding your answer vote');
-      }
-    }
-  }
 
 
   export const updateVoter = (answer) => async (dispatch, getState) => {

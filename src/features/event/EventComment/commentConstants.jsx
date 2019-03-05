@@ -1,2 +1,2 @@
-export const FETCH_ANSWERS = "FETCH_ANSWERS";
-export const SET_ANSWER = "SET_ANSWER";
+export const FETCH_COMMENTS = "FETCH_COMMENTS";
+export const SET_COMMENT = "SET_COMMENT";

@@ -3,7 +3,7 @@ import { Grid, Loader } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withFirestore, firebaseConnect } from 'react-redux-firebase';
-import { getAnswers } from '../commentActions';
+import { getComments } from '../commentActions';
 import { objectToArray } from '../../../../app/common/util/helpers';
 import EventCommentList from './EventCommentList';
 import LoadingComponent from '../../../../app/layout/LoadingComponent';
@@ -13,21 +13,21 @@ const mapState = (state, ownProps) => {
   
     return {
      
-      answers: state.answers,
+      comments: state.comments,
       loading: state.async.loading
     }
   }
 
 const actions = {
-  getAnswers
+  getComments
 };
 
 class EventCommentSection extends Component {
   
   state = {
-    moreAnswers: false,
+    moreComments: false,
     loadingInitial: true,
-    loadedAnswers: [],
+    loadedComments: [],
     contextRef: {}, 
     
   };
@@ -35,13 +35,13 @@ class EventCommentSection extends Component {
 
   async componentDidMount() {
     const { firestore, eventId } = this.props;
-    await firestore.get(`event_answer/`);
+    await firestore.get(`event_comment/`);
   
-    await firestore.setListener(`event_answer/`);
-    let next = await this.props.getAnswers(eventId);
+    await firestore.setListener(`event_comment/`);
+    let next = await this.props.getComments(eventId);
     if (next && next.docs) {
       this.setState({
-        moreAnswers: true,
+        moreComments: true,
         loadingInitial: false
       });
     }
@@ -49,21 +49,21 @@ class EventCommentSection extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.answers !== nextProps.answers) {
+    if (this.props.comments !== nextProps.comments) {
       this.setState({
-        loadedAnswers: [...this.state.loadedAnswers, ...nextProps.answers]
+        loadedComments: [...this.state.loadedComments, ...nextProps.comments]
       });
     }
   }
 
-  getNextAnswers = async () => {
-    const { answers, eventId } = this.props;
-    console.log(answers)
-    let lastEvent = answers && answers[answers.length - 1];
-    let next = await this.props.getAnswers(eventId, lastEvent);
+  getNextComments = async () => {
+    const { comments, eventId } = this.props;
+    console.log(comments)
+    let lastEvent = comments && comments[comments.length - 1];
+    let next = await this.props.getComments(eventId, lastEvent);
     if (next && next.docs && next.docs.length <= 1) {
       this.setState({
-        moreAnswers: false
+        moreComments: false
       });
     }
   };
@@ -72,9 +72,9 @@ class EventCommentSection extends Component {
 
   render() {
     const { loading, vote, eventId } = this.props;
-    const { moreAnswers, loadedAnswers } = this.state;
+    const { moreComments, loadedComments } = this.state;
     if (this.state.loadingInitial) return <LoadingComponent inverted={true} />;
-    console.log(this.state.loadedAnswers)
+    console.log(this.state.loadedComments)
     return (
       <Grid>
         <Grid.Column width={16}>
@@ -82,9 +82,9 @@ class EventCommentSection extends Component {
           <EventCommentList
             eventId={eventId}
             loading={loading}
-            moreAnswers={moreAnswers}
-            loadedAnswers={loadedAnswers}
-            getNextAnswers={this.getNextAnswers}
+            moreComments={moreComments}
+            loadedComments={loadedComments}
+            getNextComments={this.getNextComments}
             changeTab={this.changeTab}
           />
           </div>

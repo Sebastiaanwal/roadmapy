@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { withFirestore } from 'react-redux-firebase';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
-import {cancelToggle, setAnswer } from '../commentActions';
+import {cancelToggle, setComment } from '../commentActions';
 import TextInput from '../../../../app/common/form/TextInput';
 import TextArea from '../../../../app/common/form/TextArea';
 import SelectInput from '../../../../app/common/form/SelectInput';
@@ -35,7 +35,7 @@ const mapState = (state, ownProps) => {
 };
 
 const actions = {
-  setAnswer
+  setComment
 };
 
 const validate = combineValidators({
@@ -58,7 +58,7 @@ class CommentForm extends Component {
       this.props.updateAnswer(values, this.props.event);
     } else { */
       //hoe zorg ik ervoor dat gelijk het geneste like object erin komt? net zoals nu gebeurd bij event_attendees??
-      await this.props.setAnswer(values, this.props.eventId);
+      await this.props.setComment(values, this.props.eventId);
     //}
   };
 
@@ -75,22 +75,8 @@ class CommentForm extends Component {
                 type="text"
                 component={TextArea}
                 rows={3}
-                placeholder="Descripe your resource"
+                placeholder="Descripe your comment"
               />
-              <Field
-                name="title_link"
-                type="text"
-                component={TextInput}
-                placeholder="What is title of the link you share?"
-              />
-              <Field
-                name="url"
-                type="text"
-                component={TextInput}
-                rows={1}
-                placeholder="what is the url of link to the resource?"
-              />
-
               <Button
                 loading={loading}
                 disabled={invalid || submitting || pristine}
