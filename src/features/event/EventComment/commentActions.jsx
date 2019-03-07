@@ -19,12 +19,12 @@ import firebase from '../../../app/config/firebase';
         lastEvent
           ? (query = eventsRef
               .where('eventId', '==', pageId)
-              .orderBy('votes', 'desc')
+              .orderBy('date', 'desc')
               .startAfter(startAfter)
               .limit(2))
           : (query = eventsRef
               .where('eventId', '==', pageId)
-              .orderBy('votes', 'desc')
+              .orderBy('date', 'desc')
               .limit(2));
     
         let querySnap = await query.get();
