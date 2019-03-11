@@ -160,12 +160,11 @@ class EventDetailedPage extends Component {
            <EventCommentSection 
             eventId={match.params.id}
           />
-          {userDidAnswer &&
           <CommentForm 
           match={match}
           eventId={match.params.id}          
           />
-          }
+          
           <EventDetailedInfo event={event} />
           
          

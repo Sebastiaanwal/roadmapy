@@ -64,9 +64,10 @@ import firebase from '../../../app/config/firebase';
         id: user.uid, 
         };
       try {
+        const randomNum = Math.random()
+        const DocRef = `${eventId}_${user.uid}_${randomNum}`
         let eventDocRef = firestore.collection('events').doc(eventId);
-        let eventAttendeeDocRef = firestore.collection('event_comment').doc(`${eventId}_${user.uid}`);
-        const id = eventId+"_" +user.uid
+        let eventAttendeeDocRef = firestore.collection('event_comment').doc(DocRef);
         await firestore.runTransaction(async (transaction) => {
           await transaction.get(eventDocRef);
           await transaction.update(eventDocRef, {
@@ -78,7 +79,7 @@ import firebase from '../../../app/config/firebase';
             date: Date.now(),
             photoURL: profile.photoURL || '/assets/user.png',
             displayName: profile.displayName,
-            id: id, 
+            id: DocRef, 
             description: comment.description,
           })
         })
