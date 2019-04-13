@@ -5,12 +5,12 @@ import format from 'date-fns/format'
 
 const panes = [
   {menuItem: 'All Events', pane: {key: 'allEvents'}},
-  {menuItem: 'Past Events', pane: {key: 'pastEvents'}},
-  {menuItem: 'Future Events', pane: {key: 'futureEvents'}},
-  {menuItem: 'Hosting', pane: {key: 'hosted'}},
+  {menuItem: 'Junior', pane: {key: 'junior'}},
+  {menuItem: 'Medior', pane: {key: 'medior'}},
+  {menuItem: 'Senior', pane: {key: 'senior'}},
 ]
 
-const UserDeteiledEvents = ({ events, eventsLoading, changeTab }) => {
+const UserDetailedEvents = ({ events, eventsLoading, changeTab }) => {
   return (
     <Grid.Column width={12}>
       <Segment attached loading={eventsLoading}>
@@ -38,4 +38,4 @@ const UserDeteiledEvents = ({ events, eventsLoading, changeTab }) => {
   );
 };
 
-export default UserDeteiledEvents;
+export default UserDetailedEvents;

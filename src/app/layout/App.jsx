@@ -24,6 +24,10 @@ const AsyncAnswerForm = Loadable({
   loader: () => import('../../features/event/EventAnswer/Components/AnswerForm'),
   loading: LoadingComponent
 })
+const AsyncCommentForm = Loadable({
+  loader: () => import('../../features/event/EventComment/Components/CommentForm'),
+  loading: LoadingComponent
+})
 const AsyncCategoryPage = Loadable({
   loader: () => import('../../features/event/EventCategory/CategoryPage'),
   loading: LoadingComponent
@@ -73,6 +77,7 @@ class App extends Component {
                   <Route path="/event/:id" component={AsyncEventDetailedPage} />
                   <Route path="/manage/:id" component={UserIsAuthenticated(AsyncEventForm)} />
                   <Route path="/answer/:id" component={UserIsAuthenticated(AsyncAnswerForm)} />
+                  <Route path="/comment/:id" component={UserIsAuthenticated(AsyncCommentForm)} />
                   <Route path="/people" component={UserIsAuthenticated(AsyncPeopleDashboard)} />
                   <Route path="/profile/:id" component={UserIsAuthenticated(AsyncUserDetailedPage)} />
                   <Route path="/category/:id/:sub" component={UserIsAuthenticated(AsyncCategoryPage)} />

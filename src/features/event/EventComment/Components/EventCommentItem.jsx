@@ -4,21 +4,23 @@ import { Link } from 'react-router-dom'
 import { compose } from 'redux';
 import { firebaseConnect, withFirestore} from 'react-redux-firebase';
 import { connect } from 'react-redux';
+import { deleteComment } from '../commentActions'
 /* import EventAnswerCounter from './EventAnswerCounter'
 import AnswerVoteButton from '../../../counter/buttons/AnswerVoteButton' */
 import { objectToArray } from '../../../../app/common/util/helpers';
 import { debounce } from "debounce";
+import distanceInWords from 'date-fns/distance_in_words';
+
 
 
 const mapState = (state, ownProps) => {
   let answerState = {};
-
   
   if (state.firestore.ordered.event_comment && state.firestore.ordered.event_comment[0]) {
     const answerInArray = state.firestore.ordered.event_comment.filter(e => e.id === ownProps.comment.id);
+    console.log(ownProps.comment)
     answerState = answerInArray[0]
   }
- 
 
     return {
       answerState, 
@@ -26,9 +28,15 @@ const mapState = (state, ownProps) => {
   }
 }
 
+const actions = {
+  deleteComment
+};
 
 class EventCommentItem extends Component {
 
+  onDelete = async () => {
+     await this.props.deleteComment(this.props.comment, this.props.history)
+};
 
   render() {
     const {comment, answerState, eventId, uid} = this.props
@@ -43,12 +51,8 @@ class EventCommentItem extends Component {
         <Segment>
           <Item.Group>
             <Item>
-              <Item.Image size="tiny" circular src={comment.photoURL} />
               <Item.Content>
-                <Item.Header>Titel header!</Item.Header>
-                <Item.Description>
-                  Hosted by <Link to={`/profile/${comment.userUid}`}>{comment.displayName}</Link>
-                </Item.Description>
+                
                 {comment.cancelled &&
                 <Label style={{top: '-40px'}} ribbon='right' color='red' content='This event has been cancelled'/>}
               </Item.Content>
@@ -58,32 +62,38 @@ class EventCommentItem extends Component {
         <Segment secondary>
           <span>{comment.description}</span>
         </Segment>
+        
         <Segment clearing>
-      {/*       <AnswerVoteButton
-              eventId={eventId}
-              voted={"up"}
-              newAnswer={newAnswer}
-              onClick={this.handleClick}
-              content={"upvote"}
-            />
-            
-            <AnswerVoteButton
-              eventId={eventId}
-              voted={"down"}
-              newAnswer={newAnswer}
-              onClick={this.handleClick}
-              content={"downvote"}
-            /> */}
+
              {uid === answerState.uid && 
+             
           <Button
             as={Link}
-            to={`/answer/${answerState.id}`}
+            to={`/comment/${answerState.id}`}
             color="orange"
+            size="mini"
+            floated="left" 
           >
             Edit
           </Button>
         }
-          <Button as={Link} to={`/event/${comment.id}`} color="teal" floated="right" content="View" />
+          {uid === answerState.uid && 
+             <Button 
+            color="red" 
+            content="Delete"   
+            size="mini"          
+            floated="left" 
+            onClick={this.onDelete}
+          >
+          
+        Delete
+          
+          </Button>}
+           <Label attached="top right">            
+           {distanceInWords(comment.setDate, Date.now())} ago
+           commented by <Link to={`/profile/${comment.userUid}`}>{comment.displayName}</Link></Label>
+
+
         </Segment>
       </Segment.Group>
       </Grid.Column>
@@ -96,6 +106,6 @@ class EventCommentItem extends Component {
 
 export default compose(
   withFirestore,
-  connect(mapState, null),
+  connect(mapState, actions),
   firebaseConnect()
 )(EventCommentItem);

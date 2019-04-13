@@ -12,7 +12,7 @@ import LoadingComponent from '../../../app/layout/LoadingComponent'
 import { objectToArray, createDataTree } from '../../../app/common/util/helpers';
 import {getAnswers} from '../EventComment/commentActions'
 import { updatingCategoryLike, cancelGoingToEvent } from '../../user/userActions';
-import { addEventComment } from '../eventActions';
+import { addEventComment, cancelToggle } from '../eventActions';
 import { openModal } from '../../modals/modalActions'
 import EventAnswerSection from '../EventAnswer/Components/EventAnswerSection';
 import AnswerForm from '../EventAnswer/Components/AnswerForm';
@@ -95,6 +95,7 @@ const mapState = (state, ownProps) => {
 };
 
 const actions = {
+  cancelToggle,
   updatingCategoryLike,
   cancelGoingToEvent,
   addEventComment,
@@ -130,7 +131,7 @@ class EventDetailedPage extends Component {
 
   render() {
     
-    const { match, requesting, openModal, userDidAnswer, answers, getAnswers,  loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
+    const { match, requesting, cancelToggle, openModal, history, userDidAnswer, answers, getAnswers,  loading, event, auth, juniorVote, mediorVote, seniorVote,   cancelGoingToEvent, addEventComment, eventChat } = this.props;
     const attendees = event && event.attendees && objectToArray(event.attendees).sort(function(a,b) {
       return a.joinDate - b.joinDate
     })
@@ -146,6 +147,7 @@ class EventDetailedPage extends Component {
       <Grid>
         <Grid.Column width={10}>
           <EventDetailedHeader
+            cancelToggle={cancelToggle}
             event={event}
             loading={loading}
             isHost={isHost}
@@ -156,23 +158,29 @@ class EventDetailedPage extends Component {
             juniorVote={juniorVote} 
             mediorVote={mediorVote} 
             seniorVote={seniorVote} 
+            history={history}
+
           />
            <EventCommentSection 
             eventId={match.params.id}
+            history={history}
           />
           <CommentForm 
+          history={history}
           match={match}
           eventId={match.params.id}          
           />
           
-          <EventDetailedInfo event={event} />
+         
           
          
           <EventAnswerSection 
+            history={history}
             eventId={match.params.id}
           />
           {userDidAnswer &&
           <AnswerForm 
+          history={history}
           match={match}
           eventId={match.params.id}          
           />
@@ -182,6 +190,7 @@ class EventDetailedPage extends Component {
         </Grid.Column>
         <Grid.Column width={6}>
           <EventDetailedSidebar attendees={attendees} />
+          <EventDetailedInfo event={event} />
         </Grid.Column>
       </Grid>
     );

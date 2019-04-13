@@ -1,7 +1,7 @@
 import React from 'react';
 import { Segment, Image, Item, Header, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import format from 'date-fns/format';
+import distanceInWords from 'date-fns/distance_in_words';
 import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
 
 const eventImageStyle = {
@@ -17,7 +17,7 @@ const eventImageTextStyle = {
   color: 'white'
 };
 
-const EventDetailedHeader = ({ openModal, authenticated, juniorVote, mediorVote, seniorVote, loading, event, isHost, isGoing, updatingCategoryLike, cancelupdatingCategoryLike }) => {
+const EventDetailedHeader = ({ openModal, cancelToggle, history,  authenticated, juniorVote, mediorVote, seniorVote, loading, event, isHost, isGoing, updatingCategoryLike, cancelupdatingCategoryLike }) => {
   
   return (
     <Segment.Group>
@@ -40,6 +40,9 @@ const EventDetailedHeader = ({ openModal, authenticated, juniorVote, mediorVote,
                 <p>
                   Hosted by <strong>{event.hostedBy}</strong>
                 </p>
+                <p>
+                {distanceInWords(event.created, Date.now())} ago
+                </p>
               </Item.Content>
             </Item>
           </Item.Group>
@@ -47,22 +50,6 @@ const EventDetailedHeader = ({ openModal, authenticated, juniorVote, mediorVote,
       </Segment>
 
       <Segment attached="bottom">
-        {!isHost && (
-          <div>
-              {isGoing && !event.cancelled &&
-              <Button onClick={() => cancelupdatingCategoryLike(event)}>Cancel My Place</Button>}
-
-              {!isGoing && authenticated && !event.cancelled &&
-              <Button loading={loading} onClick={() => updatingCategoryLike(event)} color="teal">JOIN THIS EVENT</Button>}
-              
-              {!authenticated && !event.cancelled &&
-              <Button loading={loading} onClick={() => openModal('UnauthModal')} color="teal">JOIN THIS EVENT</Button>}
-              
-              {event.cancelled && !isHost &&
-              <Label size='large' color='red' content='This event has been cancelled'/>}
-          </div>
-        )}
-
         {isHost && (
           <Button
             as={Link}
@@ -72,6 +59,15 @@ const EventDetailedHeader = ({ openModal, authenticated, juniorVote, mediorVote,
             Edit
           </Button>
         )}
+          {isHost && (
+          <Button
+            onClick={() => cancelToggle(!event.deleted, event.id, history)}
+            type='button'
+            color={event.deleted ? 'green' : 'red'  }
+            floated='right'
+            content={event.deleted ? 'Reactivate Event' : 'delete Event' }
+            />
+            )}
         <SubCategoryButton 
           event={event} 
           juniorVote={juniorVote} 

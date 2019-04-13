@@ -7,7 +7,7 @@ import { Card, Grid, Header, Image, Segment, Tab, Label, Item, Icon, Button } fr
 
 class EventAnswerList extends Component {
   render() {
-    const { loadedAnswers, getNextAnswers, loading, moreAnswers, match, } = this.props;
+    const { loadedAnswers, getNextAnswers, history, loading, moreAnswers, match, } = this.props;
     return (
       <div>
         {loadedAnswers &&
@@ -18,7 +18,7 @@ class EventAnswerList extends Component {
               hasMore={!loading && moreAnswers}
               initialLoad={false}
             >
-              {loadedAnswers && loadedAnswers.map(answer => <EventAnswerItem match={match} key={answer.id} answer={answer} />)}
+              {loadedAnswers && loadedAnswers.map(answer => <EventAnswerItem match={match} history={history} key={answer.id} answer={answer} />)}
             </InfiniteScroll>
           )}
       </div>

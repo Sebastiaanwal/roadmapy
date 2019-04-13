@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import {updateAnserVote, updateVoter} from '../../event/EventAnswer/answerActions';
+import {updateAnswerVote, updateVoter} from '../../event/EventAnswer/answerActions';
 
 
 const actions = {
-  updateAnserVote, 
+  updateAnswerVote, 
   updateVoter
 };
 
@@ -14,9 +14,9 @@ class AnswerVoteButton extends Component {
  
   componentDidUpdate(prevProps) {
 
-    const {newAnswer, updateAnserVote, updateVoter, eventId} = this.props
+    const {newAnswer, updateAnswerVote, updateVoter, eventId} = this.props
     if (prevProps.newAnswer.votes !== newAnswer.votes) { 
-      updateAnserVote(newAnswer, eventId )
+      updateAnswerVote(newAnswer, eventId )
       updateVoter(newAnswer)
     } 
   }

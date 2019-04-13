@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import { Button, Icon, Label, Segment } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'
 import {updateEvent} from '../../event/eventActions';
 import {updatingCategoryLike} from '../../user/userActions'
 import SubCategoryButtonJunior from './SubCategoryButtonJunior'
@@ -263,10 +264,9 @@ class SubCategoryButton extends React.Component {
     const juniorCount = currentJuniorCount
     const mediorCount = currentMediorCount
     const seniorCount = currentSeniorCount
-
+    
     const subCategory = this.chooseSubCategory(currentJuniorCount, currentMediorCount, currentSeniorCount)
 
-    console.log(mediorCount)
     const totalCount = juniorCount + mediorCount + seniorCount
     const newProps = {
       ...this.props.event, 
@@ -302,6 +302,8 @@ class SubCategoryButton extends React.Component {
         newEvent={newProps}
         onClick={this.handleClick}
       />
+      <Button as={Link} to={`/event/${this.props.event.id}`} color="teal" floated="right" content="View" />
+
       </Segment>
     )
   }

@@ -5,9 +5,12 @@ import { compose } from 'redux';
 import { firebaseConnect, withFirestore} from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import EventAnswerCounter from './EventAnswerCounter'
+import {deleteAnswer} from '../answerActions'
 import AnswerVoteButton from '../../../counter/buttons/AnswerVoteButton'
 import { objectToArray } from '../../../../app/common/util/helpers';
 import { debounce } from "debounce";
+import distanceInWords from 'date-fns/distance_in_words';
+
 
 
 const mapState = (state, ownProps) => {
@@ -41,6 +44,10 @@ const mapState = (state, ownProps) => {
       uid: state.firebase.auth.uid
   }
 }
+
+const actions = {
+  deleteAnswer
+};
 
 
 class EventAnswerItem extends Component {
@@ -100,6 +107,10 @@ class EventAnswerItem extends Component {
     } 
   };
 
+  onDelete = async () => {
+    await this.props.deleteAnswer(this.props.answer, this.props.history)
+};
+
 
   render() {
     const {answer, answerState, eventId, uid} = this.props
@@ -124,7 +135,7 @@ class EventAnswerItem extends Component {
               <Item.Content>
                 <Item.Header>Titel header!</Item.Header>
                 <Item.Description>
-                  Hosted by <Link to={`/profile/${answer.userUid}`}>{answer.displayName}</Link>
+                  Created by <Link to={`/profile/${answer.userUid}`}>{answer.displayName}</Link> {distanceInWords(answer.setDate, Date.now())} ago
                 </Item.Description>
                 {answer.cancelled &&
                 <Label style={{top: '-40px'}} ribbon='right' color='red' content='This event has been cancelled'/>}
@@ -154,13 +165,21 @@ class EventAnswerItem extends Component {
              {uid === answerState.uid && 
           <Button
             as={Link}
-            to={`/answer/${answerState.id}`}
+            to={`/answer/${newAnswer.id}`}
             color="orange"
           >
             Edit
-          </Button>
+          </Button>}
+        {uid === answerState.uid && 
+           <Button 
+           color="red"      
+           onClick={this.onDelete}
+         >
+         
+       Delete
+         
+         </Button>
         }
-          <Button as={Link} to={`/event/${answer.id}`} color="teal" floated="right" content="View" />
         </Segment>
       </Segment.Group>
       </Grid.Column>
@@ -173,6 +192,6 @@ class EventAnswerItem extends Component {
 
 export default compose(
   withFirestore,
-  connect(mapState, null),
+  connect(mapState, actions),
   firebaseConnect()
 )(EventAnswerItem);

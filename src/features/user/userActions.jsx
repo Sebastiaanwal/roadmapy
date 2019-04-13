@@ -183,33 +183,18 @@ export const cancelGoingToEvent = event => async (dispatch, getState, { getFires
   }
 };
 
-export const getUserEvents = (userUid, activeTab) => async (dispatch, getState) => {
+export const getUserEvents = (userUid, subCategory) => async (dispatch, getState) => {
   dispatch(asyncActionStart());
   const firestore = firebase.firestore();
-  const today = new Date(Date.now());
-  let eventsRef = firestore.collection('event_attendee');
+  const eventsRef = firestore.collection('events');
   let query;
-  switch (activeTab) {
-    case 1: // past events
+  if (subCategory) {
       query = eventsRef
-        .where('userUid', '==', userUid)
-        .where('eventDate', '<=', today)
-        .orderBy('eventDate', 'desc');
-      break;
-    case 2: // future events
-      query = eventsRef
-        .where('userUid', '==', userUid)
-        .where('eventDate', '>=', today)
-        .orderBy('eventDate');
-      break;
-    case 3: // hosted events
-      query = eventsRef
-        .where('userUid', '==', userUid)
-        .where('host', '==', true)
-        .orderBy('eventDate', 'desc');
-      break;
-    default:
-      query = eventsRef.where('userUid', '==', userUid).orderBy('eventDate', 'desc');
+        .where('hostUid', '==', userUid)
+        .where('subCategory', '==', subCategory)
+        .orderBy('totalCount', 'desc');
+   } else {
+      query = eventsRef.where('hostUid', '==', userUid).orderBy('totalCount', 'desc');
   }
   try {
     let querySnap = await query.get();

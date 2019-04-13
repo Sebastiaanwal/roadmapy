@@ -61,7 +61,8 @@ import firebase from '../../../app/config/firebase';
       const profile = getState().firebase.profile;
       const userProfile = {
         displayName: profile.displayName,
-        id: user.uid, 
+        id: user.uid,
+        setDate: Date.now()
         };
       try {
         let eventDocRef = firestore.collection('events').doc(eventId);
@@ -76,7 +77,7 @@ import firebase from '../../../app/config/firebase';
             eventId: eventId,
             uid: user.uid,
             votes: 0,
-            date: Date.now(),
+            setDate: Date.now(),
             photoURL: profile.photoURL || '/assets/user.png',
             displayName: profile.displayName,
             id: id, 
@@ -95,7 +96,40 @@ import firebase from '../../../app/config/firebase';
     }
 
 
-    export const updateAnserVote = (answer) => { 
+    export const updateAnswer = (answer) => async (dispatch, getState) => {
+      dispatch(asyncActionStart())
+      const profile = getState().firebase.profile;
+      const firestore = firebase.firestore();
+      const userProfile = {
+        displayName: profile.displayName,
+        updateDate: Date.now()
+        };
+      try {
+        let eventDocRef = firestore.collection('events').doc(answer.eventId);
+        let eventAttendeeDocRef = firestore.collection('event_answer').doc(`${answer.id}`);
+    
+        await firestore.runTransaction(async (transaction) => {
+          await transaction.get(eventDocRef);
+          await transaction.update(eventDocRef, {
+            [`answers.${answer.uid}`]: userProfile
+          })
+          await transaction.update(eventAttendeeDocRef, {
+            updateDate: Date.now(),
+            description: answer.description,
+            title_link: answer.title_link,
+            url: answer.url
+          })
+        })
+        dispatch(asyncActionFinish())
+        toastr.success('Success', 'Your vote has been registerd');
+      } catch (error) {
+        console.log(error);
+        dispatch(asyncActionError())
+        toastr.error('Oops', 'Problem registering your vote');
+      }
+    }
+
+    export const updateAnswerVote = (answer) => { 
 
       return async (dispatch, getState) => {
       dispatch(asyncActionStart())
@@ -123,7 +157,7 @@ import firebase from '../../../app/config/firebase';
     const id = answer.eventId+"_"+user.uid
     const userProfile = {
       id: id,
-      joinDate: Date.now(),
+      setDate: Date.now(),
       uid: user.uid, 
       voteUser: answer.voteUser
       };
@@ -139,7 +173,7 @@ import firebase from '../../../app/config/firebase';
         await transaction.set(eventAttendeeDocRef, {
           eventId: answer.eventId,
           uid: user.uid,
-          eventDate: Date.now(),
+          setDate: Date.now(),
           voteUser: answer.voteUser
         })
       })
@@ -149,5 +183,28 @@ import firebase from '../../../app/config/firebase';
       console.log(error);
       dispatch(asyncActionError())
       toastr.error('Oops', 'Problem registering your vote');
+    }
+  }
+
+
+  export const deleteAnswer = (answer, history) => async (dispatch, getState, { getFirestore }) => {
+    dispatch(asyncActionStart())
+    const firestore = getFirestore();
+    const user = firestore.auth().currentUser;
+    const message = 'Are you sure you want to delete the comment?'
+
+    try { toastr.confirm(message, {
+      onOk: async () => {    
+        await firestore.delete(`event_answer/${answer.id}`);
+        await firestore.update(`events/${answer.eventId}`, {
+          [`answers.${user.uid}`]: firestore.FieldValue.delete()
+          })
+      await history.go();
+        }
+      })
+    } catch (error) {
+      console.log(error);
+      dispatch(asyncActionError())
+      toastr.error('Oops', 'Problem deleted your answer');
     }
   }

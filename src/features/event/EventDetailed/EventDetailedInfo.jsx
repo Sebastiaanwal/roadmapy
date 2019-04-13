@@ -35,30 +35,6 @@ class EventDetailedInfo extends Component {
             </Grid.Column>
           </Grid>
         </Segment>
-        <Segment attached>
-          <Grid verticalAlign="middle">
-            <Grid.Column width={1}>
-              <Icon name="calendar" size="large" color="teal" />
-            </Grid.Column>
-            <Grid.Column width={15}>
-            </Grid.Column>
-          </Grid>
-        </Segment>
-        <Segment attached>
-          <Grid verticalAlign="middle">
-            <Grid.Column width={1}>
-              <Icon name="marker" size="large" color="teal" />
-            </Grid.Column>
-            <Grid.Column width={11}>
-              <span>{event.venue}</span>
-            </Grid.Column>
-            <Grid.Column width={4}>
-              <Button onClick={this.showMapToggle} color="teal" size="tiny" content={this.state.showMap ? 'Hide Map' : 'Show Map'}/>
-            </Grid.Column>
-          </Grid>
-        </Segment>
-        {this.state.showMap &&
-        <EventDetailedMap lat={event.venueLatLng.lat} lng={event.venueLatLng.lng}/>}
       </Segment.Group>
     );
   }

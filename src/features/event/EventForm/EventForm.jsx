@@ -67,8 +67,6 @@ const validate = combineValidators({
     })
   )(),
   city: isRequired('city'),
-  venue: isRequired('venue'),
-  date: isRequired('date')
 });
 
 class EventForm extends Component {
@@ -88,35 +86,10 @@ class EventForm extends Component {
     await firestore.unsetListener(`events/${match.params.id}`);
   }
 
-  handleScriptLoaded = () => this.setState({ scriptLoaded: true });
-
-  handleCitySelect = selectedCity => {
-    geocodeByAddress(selectedCity)
-      .then(results => getLatLng(results[0]))
-      .then(latlng => {
-        this.setState({
-          cityLatLng: latlng
-        });
-      })
-      .then(() => {
-        this.props.change('city', selectedCity);
-      });
-  };
-
-  handleVenueSelect = selectedVenue => {
-    geocodeByAddress(selectedVenue)
-      .then(results => getLatLng(results[0]))
-      .then(latlng => {
-        this.setState({
-          venueLatLng: latlng
-        });
-      })
-      .then(() => {
-        this.props.change('venue', selectedVenue);
-      });
-  };
+ 
 
   initalCountSubCategory = values => {
+    const deleted = false
     let newValues
     const totalCount = 1
     if (values.subCategory === 'junior') {
@@ -126,7 +99,7 @@ class EventForm extends Component {
       const juniorVote = true
       const mediorVote = false
       const seniorVote = false
-      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote}
+      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote, deleted}
     } else if (values.subCategory === 'medior') {
       const juniorCount = 0
       const mediorCount = 1
@@ -134,7 +107,7 @@ class EventForm extends Component {
       const juniorVote = false
       const mediorVote = true
       const seniorVote = false
-      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote }
+      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote, deleted}
     } else if (values.subCategory === 'senior') {
       const juniorCount = 0
       const mediorCount = 0
@@ -142,7 +115,7 @@ class EventForm extends Component {
       const juniorVote = false
       const mediorVote = false
       const seniorVote = true
-      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote}
+      newValues = {...values, juniorCount, mediorCount, seniorCount, totalCount, juniorVote, mediorVote, seniorVote, deleted}
     } return {
       newValues
     }
@@ -153,11 +126,7 @@ class EventForm extends Component {
     const newCountValues = this.initalCountSubCategory(values)
     const newerCountValues = newCountValues.newValues
 
-    values.venueLatLng = this.state.venueLatLng;
     if (this.props.initialValues.id) {
-      if (Object.keys(values.venueLatLng).length === 0) {
-        values.venueLatLng = this.props.event.venueLatLng
-      }
       this.props.updateEvent(values);
       this.props.history.goBack();
     } else {
@@ -171,10 +140,7 @@ class EventForm extends Component {
     const { invalid, submitting, pristine, event, cancelToggle, loading } = this.props;
     return (
       <Grid>
-        <Script
-          url="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1Oy3Ic6JyE6RR4eEbEFw2T-ynXjjWzTc&libraries=places"
-          onLoad={this.handleScriptLoaded}
-        />
+       
         <Grid.Column width={10}>
           <Segment>
             <Header sub color="teal" content="Event Details" />
@@ -206,38 +172,7 @@ class EventForm extends Component {
                 rows={3}
                 placeholder="Tell us about your event"
               />
-              <Header sub color="teal" content="Event Location details" />
-              <Field
-                name="city"
-                type="text"
-                component={PlaceInput}
-                options={{ types: ['(cities)'] }}
-                placeholder="Event city"
-                onSelect={this.handleCitySelect}
-              />
-              {this.state.scriptLoaded && (
-                <Field
-                  name="venue"
-                  type="text"
-                  component={PlaceInput}
-                  options={{
-                    location: new google.maps.LatLng(this.state.cityLatLng),
-                    radius: 1000,
-                    types: ['establishment']
-                  }}
-                  placeholder="Event venue"
-                  onSelect={this.handleVenueSelect}
-                />
-              )}
-              <Field
-                name="date"
-                type="text"
-                component={DateInput}
-                dateFormat="YYYY-MM-DD HH:mm"
-                timeFormat="HH:mm"
-                showTimeSelect
-                placeholder="Date and time of event"
-              />
+              
               <Button
                 loading={loading}
                 disabled={invalid || submitting || pristine}
@@ -252,11 +187,11 @@ class EventForm extends Component {
               {event.id &&
               <Button
 
-                onClick={() => cancelToggle(!event.cancelled, event.id)}
+                onClick={() => cancelToggle(!event.deleted, event.id)}
                 type='button'
-                color={event.cancelled ? 'green' : 'red'}
+                color={event.deleted ?  'red' : 'green' }
                 floated='right'
-                content={event.cancelled ? 'Reactivate Event' : 'Cancel Event'}
+                content={event.deleted ? 'delete Event' : 'Reactivate Event' }
               />}
             </Form>
           </Segment>

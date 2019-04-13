@@ -19,12 +19,12 @@ import firebase from '../../../app/config/firebase';
         lastEvent
           ? (query = eventsRef
               .where('eventId', '==', pageId)
-              .orderBy('date', 'desc')
+              .orderBy('setDate', 'desc')
               .startAfter(startAfter)
               .limit(2))
           : (query = eventsRef
               .where('eventId', '==', pageId)
-              .orderBy('date', 'desc')
+              .orderBy('setDate', 'desc')
               .limit(2));
     
         let querySnap = await query.get();
@@ -76,7 +76,7 @@ import firebase from '../../../app/config/firebase';
           await transaction.set(eventAttendeeDocRef, {
             eventId: eventId,
             uid: user.uid,
-            date: Date.now(),
+            setDate: Date.now(),
             photoURL: profile.photoURL || '/assets/user.png',
             displayName: profile.displayName,
             id: DocRef, 
@@ -92,39 +92,60 @@ import firebase from '../../../app/config/firebase';
       }
     }
 
-
-  export const updateVoter = (answer) => async (dispatch, getState) => {
-    dispatch(asyncActionStart())
-    const firestore = firebase.firestore();
-    const user = firebase.auth().currentUser;
-    const id = answer.eventId+"_"+user.uid
-    const userProfile = {
-      id: id,
-      joinDate: Date.now(),
-      uid: user.uid, 
-      voteUser: answer.voteUser
-      };
-    try {
-      let eventDocRef = firestore.collection('event_answer').doc(answer.id);
-      let eventAttendeeDocRef = firestore.collection('answer_votes').doc(`${answer.eventId}_${user.uid}`);
-  
-      await firestore.runTransaction(async (transaction) => {
-        await transaction.get(eventDocRef);
-        await transaction.update(eventDocRef, {
-          [`voters.${user.uid}`]: userProfile
+    export const updateComment = (comment) => async (dispatch, getState) => {
+      dispatch(asyncActionStart())
+      const firestore = firebase.firestore();
+      const user = firebase.auth().currentUser;
+      const profile = getState().firebase.profile;
+      const userProfile = {
+        displayName: profile.displayName,
+        id: user.uid, 
+        };
+      try {
+        let eventDocRef = firestore.collection('events').doc(comment.eventId);
+        let eventAttendeeDocRef = firestore.collection('event_comment').doc(comment.id);
+        await firestore.runTransaction(async (transaction) => {
+          await transaction.get(eventDocRef);
+          await transaction.update(eventDocRef, {
+            [`comments.${user.uid}`]: userProfile
+          })
+          await transaction.update(eventAttendeeDocRef, {
+            uid: user.uid,
+            updateDate: Date.now(),
+            photoURL: profile.photoURL || '/assets/user.png',
+            displayName: profile.displayName,
+            description: comment.description,
+          })
         })
-        await transaction.set(eventAttendeeDocRef, {
-          eventId: answer.eventId,
-          uid: user.uid,
-          eventDate: Date.now(),
-          voteUser: answer.voteUser
-        })
-      })
-      dispatch(asyncActionFinish())
-      toastr.success('Success', 'Your vote has been registerd');
-    } catch (error) {
-      console.log(error);
-      dispatch(asyncActionError())
-      toastr.error('Oops', 'Problem registering your vote');
+        dispatch(asyncActionFinish())
+        toastr.success('Success', 'You changed your comment');
+      } catch (error) {
+        console.log(error);
+        dispatch(asyncActionError())
+        toastr.error('Oops', 'Problem changing your comment');
+      }
     }
-  }
+
+
+    export const deleteComment = (comment, history) => async (dispatch, getState, { getFirestore }) => {
+      dispatch(asyncActionStart())
+      const firestore = getFirestore();
+      const user = firestore.auth().currentUser;
+      const message = 'Are you sure you want to delete the comment?'
+      try { toastr.confirm(message, {
+        onOk: async () => {
+        await firestore.delete(`event_comment/${comment.id}`)
+        await firestore.update(`events/${comment.eventId}`, {
+            [`comments.${user.uid}`]: firestore.FieldValue.delete()
+            })
+        await history.go();
+          }
+        })
+      } catch (error) {
+        console.log(error);
+        dispatch(asyncActionError())
+        toastr.error('Oops', 'Problem deleted your comment');
+      }
+    }
+
+  

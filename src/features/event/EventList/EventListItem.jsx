@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { compose } from 'redux';
 import { firestoreConnect} from 'react-redux-firebase';
 import { connect } from 'react-redux';
-import format from 'date-fns/format'
+import distanceInWords from 'date-fns/distance_in_words';
 import EventListCounter from './EventListCounter'
 import SubCategoryButton from '../../counter/buttons/SubCategoryButton';
 import { objectToArray } from '../../../app/common/util/helpers';
@@ -65,28 +65,21 @@ class EventListItem extends Component {
         <Segment>
           <Item.Group>
             <Item>
-              <Item.Image size="tiny" circular src={event.hostPhotoURL} />
               <Item.Content>
                 <Item.Header as={Link} to={`/event/${event.id}`}>{event.title}</Item.Header>
                 <Item.Description>
-                  Hosted by <Link to={`/profile/${event.hostUid}`}>{event.hostedBy}</Link>
+                  Created by <Link to={`/profile/${event.hostUid}`}>{event.hostedBy}</Link> {distanceInWords(event.created, Date.now())} ago
                 </Item.Description>
+         
                 {event.cancelled &&
                 <Label style={{top: '-40px'}} ribbon='right' color='red' content='This event has been cancelled'/>}
               </Item.Content>
             </Item>
           </Item.Group>
         </Segment>
-        <Segment>
-          <span>
-            <Icon name="clock" /> {format(event.date.toDate(), 'dddd Do MMMM')} at {format(event.date.toDate(), 'HH:mm')}|
-            <Icon name="marker" /> {event.venue}
-          </span>
-        </Segment>
         <Segment secondary>
           <span>{event.description}</span>
         </Segment>
-        <Segment clearing>
           <SubCategoryButton 
           event={eventState} 
           juniorVote={juniorVote} 
@@ -94,9 +87,6 @@ class EventListItem extends Component {
           seniorVote={seniorVote} 
           authenticated={authenticated}
           />
-
-          <Button as={Link} to={`/event/${event.id}`} color="teal" floated="right" content="View" />
-        </Segment>
       </Segment.Group>
       </Grid.Column>
     </Grid>

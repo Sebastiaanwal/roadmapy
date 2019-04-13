@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { withFirestore } from 'react-redux-firebase';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
-import {cancelToggle, setAnswer } from '../answerActions';
+import {updateAnswer, setAnswer } from '../answerActions';
 import TextInput from '../../../../app/common/form/TextInput';
 import TextArea from '../../../../app/common/form/TextArea';
 import SelectInput from '../../../../app/common/form/SelectInput';
@@ -21,12 +21,15 @@ import {
 const mapState = (state, ownProps) => {
   let answer = {}
 
-  if (state.firestore.ordered.event_answer && state.firestore.ordered.event_answer[0] && ownProps.eventId != ownProps.match.params.id) {
-    answer = state.firestore.ordered.event_answer[0];
+
+    
+  if (state.firestore.ordered.event_answer && state.firestore.ordered.event_answer[0]  && ownProps.eventId != ownProps.match.params.id) {
+    const answerInArray = state.firestore.ordered.event_answer.filter(e => e.id === ownProps.match.params.id);
+    answer = answerInArray[0]
   } else {
     answer = {}
   }
-
+  
   return {
     initialValues: answer,
     loading: state.async.loading
@@ -35,7 +38,8 @@ const mapState = (state, ownProps) => {
 };
 
 const actions = {
-  setAnswer
+  setAnswer,
+  updateAnswer
 };
 
 const validate = combineValidators({
@@ -53,13 +57,15 @@ const validate = combineValidators({
 class AnswerForm extends Component {
 
   onFormSubmit = async values => {
-
-   /*  if (this.props.initialValues.id) {
-      this.props.updateAnswer(values, this.props.event);
-    } else { */
+    if (this.props.initialValues.id) {
+      await this.props.updateAnswer(values);
+      this.props.history.goBack();
+    } else {
       //hoe zorg ik ervoor dat gelijk het geneste like object erin komt? net zoals nu gebeurd bij event_attendees??
       await this.props.setAnswer(values, this.props.eventId);
-    //}
+      this.props.history.go();
+
+    }
   };
 
   render() {

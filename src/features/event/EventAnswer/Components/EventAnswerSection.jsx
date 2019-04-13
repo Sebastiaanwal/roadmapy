@@ -71,7 +71,7 @@ class EventAnswerSection extends Component {
   handleContextRef = contextRef => this.setState({contextRef})
 
   render() {
-    const { loading, vote, eventId } = this.props;
+    const { loading, vote, history, eventId } = this.props;
     const { moreAnswers, loadedAnswers } = this.state;
     if (this.state.loadingInitial) return <LoadingComponent inverted={true} />;
     console.log(this.state.loadedAnswers)
@@ -80,6 +80,7 @@ class EventAnswerSection extends Component {
         <Grid.Column width={16}>
           <div ref={this.handleContextRef}>
           <EventAnswerList
+            history={history}
             eventId={eventId}
             loading={loading}
             moreAnswers={moreAnswers}

@@ -48,9 +48,9 @@ class UserDetailedPage extends Component {
     if (!user.exists) {
       toastr.error('Not found', 'This is not the user you are looking for')
       this.props.history.push('/error')
-    }
+    }    
     let events = await this.props.getUserEvents(this.props.userUid);
-    console.log(events);
+
   }
 
   changeTab = (e, data) => {
