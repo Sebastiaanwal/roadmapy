@@ -144,13 +144,13 @@ export const addEventComment = (eventId, values, parentId) =>
           .where('deleted', '==', false )
           .orderBy('totalCount', 'desc')
           .startAfter(startAfter)
-          .limit(2))
+          .limit(5))
       : (query = eventsRef
         .where('category', '==', category)
         .where('subCategory', '==', subCategory)
         .where('deleted', '==', false )
         .orderBy('totalCount', 'desc')
-        .limit(2))
+        .limit(5))
         } else {
           lastEvent
       ? (query = eventsRef
@@ -158,12 +158,12 @@ export const addEventComment = (eventId, values, parentId) =>
           .where('deleted', '==', false )
           .orderBy('totalCount', 'desc')
           .startAfter(startAfter)
-          .limit(2))
+          .limit(5))
       : (query = eventsRef
         .where('category', '==', category)
         .where('deleted', '==', false )
         .orderBy('totalCount', 'desc')
-        .limit(2))
+        .limit(5))
         }
         let querySnap = await query.get();
     

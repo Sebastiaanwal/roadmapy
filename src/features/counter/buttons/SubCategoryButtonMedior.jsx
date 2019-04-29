@@ -32,6 +32,7 @@ class SubCategoryButtonMedior extends Component {
         <Button 
           color='orange'
           onClick={this.handleChange}
+          size='mini'
           >
         <Icon name='heart' />
         Medior

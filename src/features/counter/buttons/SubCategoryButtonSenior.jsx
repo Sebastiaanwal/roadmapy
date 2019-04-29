@@ -31,6 +31,7 @@ class SubCategoryButtonSenior extends Component {
         <Button 
           color='red'
           onClick={this.handleChange}
+          size='mini'
           >
         <Icon name='heart' />
         Senior

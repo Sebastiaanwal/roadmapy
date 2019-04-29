@@ -77,9 +77,9 @@ class EventListItem extends Component {
             </Item>
           </Item.Group>
         </Segment>
-        <Segment secondary>
+     {/*    <Segment secondary>
           <span>{event.description}</span>
-        </Segment>
+        </Segment> */}
           <SubCategoryButton 
           event={eventState} 
           juniorVote={juniorVote} 

@@ -92,6 +92,8 @@ class CategoryPage extends Component {
 
         </Grid.Column>
         <Grid.Column width={6}>
+          <EventActivity activities={activities} contextRef={this.state.contextRef} />
+
         </Grid.Column>
         <Grid.Column width={10}>
           <Loader active={loading}/>

@@ -132,7 +132,7 @@ class EventForm extends Component {
     } else {
       //hoe zorg ik ervoor dat gelijk het geneste like object erin komt? net zoals nu gebeurd bij event_attendees??
       await this.props.createEvent(newerCountValues);
-      this.props.history.push('/events');
+      this.props.history.goBack();
     }
   };
 
