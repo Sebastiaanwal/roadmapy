@@ -12,6 +12,7 @@ import answerReducer from '../../features/event/EventAnswer/answerReducer'
 import commentReducer from '../../features/event/EventComment/commentReducer'
 
 
+
 const rootReducer = combineReducers({
   firebase: firebaseReducer,
   firestore: firestoreReducer,
@@ -23,7 +24,7 @@ const rootReducer = combineReducers({
   async: asyncReducer,
   toastr: toastrReducer,
   answers: answerReducer,
-  comments: commentReducer
+  comments: commentReducer,
 })
 
 export default rootReducer

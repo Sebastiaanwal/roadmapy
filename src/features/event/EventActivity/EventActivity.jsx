@@ -1,6 +1,6 @@
 import React from 'react'
 import { Header, Segment, Image, Feed, Sticky, List } from 'semantic-ui-react'
-import EventActivityItem from './EventActivityItem'
+import UserList from './UserList'
 
 
 const EventActivity = ({activities, contextRef}) => {
@@ -22,37 +22,7 @@ const EventActivity = ({activities, contextRef}) => {
 
      
       <Header attached='top' content='Top contributers to the list'/>
-      <Segment attached>
-      <List relaxed>
-    <List.Item>
-      <Image avatar src='https://react.semantic-ui.com/images/avatar/small/daniel.jpg' />
-      <List.Content>
-        <List.Header as='a'>Daniel Louise</List.Header>
-        <List.Description>
-          323 votes
-        </List.Description>
-      </List.Content>
-    </List.Item>
-    <List.Item>
-      <Image avatar src='https://react.semantic-ui.com/images/avatar/small/stevie.jpg' />
-      <List.Content>
-        <List.Header as='a'>Stevie Feliciano</List.Header>
-        <List.Description>
-           323 votes
-        </List.Description>
-      </List.Content>
-    </List.Item>
-    <List.Item>
-      <Image avatar src='https://react.semantic-ui.com/images/avatar/small/elliot.jpg' />
-      <List.Content>
-        <List.Header as='a'>Elliot Fu</List.Header>
-        <List.Description>
-          323 votes
-        </List.Description>
-      </List.Content>
-    </List.Item>
-  </List>
-      </Segment>
+      <UserList />
     </Sticky>
   )
 }

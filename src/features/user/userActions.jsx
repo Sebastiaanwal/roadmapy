@@ -252,3 +252,29 @@ export const unfollowUser = userToUnfollow => async (dispatch, getState, { getFi
     console.log(error);
   }
 };
+
+/* export const getUsers = () => async (dispatch, getState) => {
+  const firestore = firebase.firestore();
+  const eventsRef = firestore.collection('users');
+  try {
+    dispatch(asyncActionStart());
+
+    query = eventsRef
+    .orderBy('totalCount', 'desc')
+    .limit(3)
+    
+    let querySnap = await query.get();
+
+    let users = [];
+
+    for (let i = 0; i < querySnap.docs.length; i++) {
+      let evt = { ...querySnap.docs[i].data(), id: querySnap.docs[i].id };
+      users.push(evt);
+    }
+    dispatch({ type: FETCH_USERS, payload: { users } });
+    return querySnap;
+  } catch (error) {
+    console.log(error);
+    dispatch(asyncActionError());
+  }
+}; */
