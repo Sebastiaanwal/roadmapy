@@ -10,7 +10,6 @@ import SubCategoryButtonMedior from './SubCategoryButtonMedior'
 import SubCategoryButtonSenior from './SubCategoryButtonSenior'
 import { debounce } from "debounce";
 
-
 const actions = {
   updateEvent, 
   updatingCategoryLike
@@ -52,9 +51,7 @@ class SubCategoryButton extends React.Component {
   handleJuniorClick(button) {
       const {juniorCount, mediorCount, seniorCount} = this.props.event
       const {juniorVote, mediorVote, seniorVote } = this.props
-
-      console.log(juniorCount)
-      console.log(this.props.mediorVote)
+      
       if (
         juniorVote === false
         && mediorVote === false

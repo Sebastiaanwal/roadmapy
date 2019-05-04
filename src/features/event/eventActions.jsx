@@ -15,12 +15,6 @@ export const createEvent = event => {
     let newEvent = createNewEvent(user, photoURL, event);
     try {
       let createdEvent = await firestore.add(`events`, {...newEvent});
-      await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
-        eventId: createdEvent.id,
-        userUid: user.uid,
-        eventDate: event.date,
-        host: true
-      });
       await firestore.set(`event_likes/${createdEvent.id}_${user.uid}`, {
         eventId: createdEvent.id,
         userUid: user.uid,
@@ -41,35 +35,12 @@ export const updateEvent = event => {
   return async (dispatch, getState) => {
     dispatch(asyncActionStart());
     const firestore = firebase.firestore();
-    //moet hier nog een runTransaction functie bij? 
-    //Concurrency problemen bij upvoting voorkomen?
-    //https://firebase.google.com/docs/firestore/manage-data/transactions
-    //of is met debounce het probleen al genoeg verholpen?
     try {
       let eventDocRef = firestore.collection('events').doc(event.id);
-      let dateEqual = compareAsc(getState().firestore.ordered.events[0].date.toDate(), event.date);
-      if (dateEqual !== 0) {
-        let batch = firestore.batch();
-        await batch.update(eventDocRef, event);
-
-
-        //naast attendee moet je hier ook de event data in event_likes, event_answer en toekomstige answer_comment/event_comment updaten.
-        //Kopier de onderstaande code en maak het relevant voor de andere geneste data in event
-        let eventAttendeeRef = firestore.collection('event_attendee');
-        let eventAttendeeQuery = await eventAttendeeRef.where('eventId', '==', event.id);
-        let eventAttendeeQuerySnap = await eventAttendeeQuery.get();
-        
-      
-        for (let i = 0; i < eventAttendeeQuerySnap.docs.length; i++) {
-          let eventAttendeeDocRef = await firestore.collection('event_attendee').doc(eventAttendeeQuerySnap.docs[i].id);
-          await batch.update(eventAttendeeDocRef, {
-            eventDate: event.date
-          })
-        }
-        await batch.commit();
-      } else {
-        await eventDocRef.update(event);
-      }
+        await firestore.runTransaction(async (transaction) => {
+          await transaction.get(eventDocRef);
+          await transaction.update(eventDocRef, event)
+        })
       dispatch(asyncActionFinish());
       toastr.success('Success', 'Event has been updated');
     } catch (error) {
