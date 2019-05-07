@@ -13,6 +13,7 @@ class SubCategoryButtonMedior extends Component {
 
 
   componentDidUpdate(prevProps) {
+    console.log(this.props.clickedCategory)
     const {updateEvent, updatingCategoryLike, newEvent, clickedCategory } = this.props
     if (clickedCategory === 'medior' && prevProps.newEvent.mediorCount !== newEvent.mediorCount && prevProps.newEvent.mediorVote !== newEvent.mediorVote ) {
       updateEvent(newEvent)

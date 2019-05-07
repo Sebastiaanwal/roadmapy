@@ -12,7 +12,7 @@ import { debounce } from "debounce";
 
 const actions = {
   updateEvent, 
-  updatingCategoryLike
+  updatingCategoryLike,
 };
 
 class SubCategoryButton extends React.Component {
@@ -51,7 +51,7 @@ class SubCategoryButton extends React.Component {
   handleJuniorClick(button) {
       const {juniorCount, mediorCount, seniorCount} = this.props.event
       const {juniorVote, mediorVote, seniorVote } = this.props
-      
+
       if (
         juniorVote === false
         && mediorVote === false

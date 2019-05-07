@@ -1,22 +1,23 @@
 import React, { Component } from 'react'
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import {updateEvent} from '../../event/eventActions';
+import {updateEvent, juniorButton} from '../../event/eventActions';
 import {updatingCategoryLike} from '../../user/userActions';
 
 
 const actions = {
   updateEvent, 
-  updatingCategoryLike
+  updatingCategoryLike,
+  juniorButton
 };
 
 class SubCategoryButtonJunior extends Component {
 
   componentDidUpdate(prevProps) {
-    const {updateEvent, updatingCategoryLike, newEvent, clickedCategory } = this.props
+    console.log(this.props.clickedCategory)
+    const {updateEvent, juniorButton, updatingCategoryLike, newEvent, clickedCategory } = this.props
     if (clickedCategory === 'junior' && prevProps.newEvent.juniorCount !== newEvent.juniorCount && prevProps.newEvent.juniorVote !== newEvent.juniorVote) { 
-      updateEvent(newEvent)
-      updatingCategoryLike(newEvent)
+      juniorButton(newEvent)
     } 
   }
   handleChange = () => {

@@ -12,6 +12,7 @@ const actions = {
 class SubCategoryButtonSenior extends Component {
 
   componentDidUpdate(prevProps) {
+    console.log(this.props.clickedCategory)
     const {updateEvent, updatingCategoryLike, newEvent, clickedCategory } = this.props
     if (clickedCategory === 'senior' && prevProps.newEvent.seniorCount !== newEvent.seniorCount && prevProps.newEvent.seniorVote !== newEvent.seniorVote ) {
       updateEvent(newEvent)

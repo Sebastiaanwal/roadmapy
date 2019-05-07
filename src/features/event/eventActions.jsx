@@ -6,6 +6,8 @@ import moment from 'moment';
 import firebase from '../../app/config/firebase';
 import compareAsc from 'date-fns/compare_asc';
 import { debounce } from "debounce";
+import { objectToArray } from '../../app/common/util/helpers';
+
 
 export const createEvent = event => {
   return async (dispatch, getState, { getFirestore }) => {
@@ -157,3 +159,131 @@ export const addEventComment = (eventId, values, parentId) =>
         dispatch(asyncActionError());
       }
     };
+
+    //Als op de button klikt moet 1 van de drie functies gaan
+    //argumenten: event, 
+
+    //bijv. de junior functie moeten checken of checken de event_like voor deze UID al bestaat. 
+    //Bestaat het niet dan die info gebruiken en verwerken in object voor event en object voor event_like
+    //zowel het event en event_like object toevoegen/upgraden binnen een transaction.
+
+    //bestaat de event_like voor deze UID?
+    //get het object en check in dit object voor welke sub-cat al geliked is
+  // het kan ook zijn dat het object dus bestaat bij event_like maar dat alles weer op neutraal staat omdat er weer is terug geklikt. 
+
+    //vervolgens gebruik je deze info bij het aanpassen van een nieuw object
+    //het nieuwe object wordt gepushed naar het event_like object
+    //en het event wordt geincrmenteerd met +1
+
+    //Maak een cloud function voor het updaten van de totale score.
+
+
+    export const juniorButton = event => async (dispatch, getState) => {
+      const user = firebase.auth().currentUser
+      const firestore = firebase.firestore();
+      const eventLike = {
+        setDate: Date.now(),
+        id: user.uid, 
+        juniorVote: true,
+        mediorVote: false, 
+        seniorVote: false
+        };
+        dispatch(asyncActionStart());
+        try {
+          let eventLikeDocRef = firestore.collection('event_likes').doc(`${event.id}_${user.uid}`);
+          let eventDocRef = firestore.collection('events').doc(event.id)
+
+          increment = firebase.firestore.FieldValue.increment(1)
+         
+          let documentSnapshot = await eventLikeDocRef.get();
+
+          await firestore.runTransaction(async (transaction) => {
+              await transaction.get(eventDocRef)
+              if (documentSnapshot.exists) {
+                console.log('het werkt bram')
+              } else {
+                console.log('het werkt nietttttt bram')
+                await transaction.update(eventDocRef, {
+                  [`likes.${user.uid}`]: eventLike,
+                  totalCount: event.totalCount =+ 1,
+                  juniorCount: event.juniorCount =+ 1
+                })
+                await transaction.set(eventLikeDocRef, {
+                  eventLike
+                })
+              }
+           })
+          dispatch(asyncActionFinish());
+          toastr.success('Success', 'Event has been updated');
+        } catch (error) {
+          console.log(error);
+          dispatch(asyncActionError());
+          toastr.error('Oops', 'Something went wrong');
+        }
+      };
+
+/*     export const updatingCategoryLike = (event) => async (dispatch, getState) => {
+      dispatch(asyncActionStart())
+      const firestore = firebase.firestore();
+      const user = firebase.auth().currentUser;
+      const profile = getState().firebase.profile;
+      const userProfile = {
+        going: true,
+        joinDate: Date.now(),
+        photoURL: profile.photoURL || '/assets/user.png',
+        displayName: profile.displayName,
+        host: false,
+        id: user.uid, 
+        juniorVote: event.juniorVote,
+        mediorVote: event.mediorVote, 
+        seniorVote: event.seniorVote
+        };
+      try {
+        let eventDocRef = firestore.collection('events').doc(event.id);
+        let eventAttendeeDocRef = firestore.collection('event_likes').doc(`${event.id}_${user.uid}`);
+    
+        await firestore.runTransaction(async (transaction) => {
+          await transaction.get(eventDocRef);
+          await transaction.update(eventDocRef, {
+            [`likes.${user.uid}`]: userProfile
+          })
+          await transaction.set(eventAttendeeDocRef, {
+            eventId: event.id,
+            userUid: user.uid,
+            eventDate: event.date,
+            host: false,
+            likedSubCategory: event.subCategory,
+          })
+        })
+        dispatch(asyncActionFinish())
+        toastr.success('Success', 'You have signed up to the event');
+      } catch (error) {
+        console.log(error);
+        dispatch(asyncActionError())
+        toastr.error('Oops', 'Problem signing up to event');
+      }
+    }
+
+    // Create a reference to the SF doc.
+var sfDocRef = db.collection("cities").doc("SF");
+
+db.runTransaction(function(transaction) {
+    return transaction.get(sfDocRef).then(function(sfDoc) {
+        if (!sfDoc.exists) {
+            throw "Document does not exist!";
+        }
+
+        var newPopulation = sfDoc.data().population + 1;
+        if (newPopulation <= 1000000) {
+            transaction.update(sfDocRef, { population: newPopulation });
+            return newPopulation;
+        } else {
+            return Promise.reject("Sorry! Population is too big.");
+        }
+    });
+}).then(function(newPopulation) {
+    console.log("Population increased to ", newPopulation);
+}).catch(function(err) {
+    // This will be an "population is too big" error.
+    console.error(err);
+}); */
